@@ -8,6 +8,12 @@
     "~/.config/kilo/AGENTS.md"
   ],
   "auto_collapse_reasoning": true,
+  "compaction": {
+    "auto": true,
+    "prune": true,
+    "reserved": 10000,
+    "tail_turns": 2
+  },
   "permission": {
     "read": "allow",
     "glob": "allow",
@@ -21,7 +27,16 @@
       "*": "allow",
       "ble-engineer": "allow",
       "gatt-recovery": "allow",
-      "russian-dev": "allow"
+      "russian-dev": "allow",
+      "reviewer": "allow",
+      "planner": "allow",
+      "debugger": "allow",
+      "doc-scribe": "allow",
+      "sys-inspector": "allow",
+      "log-analyzer": "allow",
+      "adb-specialist": "allow",
+      "esp32-arduino-specialist": "allow",
+      "apk-reverse-engineer": "allow"
     },
     "bash": {
       "*": "allow",
@@ -48,5 +63,5 @@
       "/etc/*": "allow",
       "/tmp/*": "allow"
     }
-  }
+  },
 }

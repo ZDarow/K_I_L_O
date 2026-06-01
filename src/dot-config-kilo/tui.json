@@ -1,0 +1,24 @@
+{
+  "$schema": "https://opencode.ai/tui.json",
+  "mouse": true,
+  "keybinds": {
+    "leader": "ctrl+x",
+    "app_exit": "ctrl+q",
+    "session_interrupt": "escape",
+    "input_submit": "return",
+    "input_newline": "shift+return",
+    "input_clear": "ctrl+l",
+    "input_undo": "ctrl+z",
+    "input_redo": "ctrl+shift+z",
+    "input_paste": "ctrl+shift+v",
+    "messages_page_up": "pageup",
+    "messages_page_down": "pagedown",
+    "messages_copy": "<leader>y",
+    "session_new": "<leader>n",
+    "session_list": "<leader>l",
+    "command_list": "ctrl+p",
+    "model_list": "<leader>m",
+    "agent_cycle": "tab",
+    "tips_toggle": "<leader>?"
+  }
+}
