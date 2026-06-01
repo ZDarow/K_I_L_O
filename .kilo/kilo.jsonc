@@ -5,7 +5,8 @@
   "model": "anthropic/claude-sonnet-4-20250514",
   "instructions": [
     "AGENTS.md",
-    ".kilo/instructions/*.md"
+    ".kilo/instructions/*.md",
+    "~/.config/kilo/AGENTS.md"
   ],
   "auto_collapse_reasoning": true,
   "permission": {
