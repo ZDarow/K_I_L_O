@@ -2,91 +2,119 @@
 
 **Репозиторий:** [https://github.com/ZDarow/K_I_L_O](https://github.com/ZDarow/K_I_L_O)
 
-Полная конфигурация AI-агента KiloCode для Linux Mint с русскоязычными правилами, BLE-инженерией и системными настройками.
+Полная конфигурация AI-агента KiloCode для Linux Mint: русскоязычные правила, BLE-инженерия, системные настройки.
+
+---
 
 ## Быстрая установка
 
 ```bash
-# Клонирование
 git clone https://github.com/ZDarow/K_I_L_O.git /tmp/kilo-install
 cd /tmp/kilo-install
 
-# Запуск установщика
-chmod +x install.sh
-./install.sh
+make check     # pre-flight проверка системы
+make install   # установка
+make verify    # проверка целостности
 ```
 
-После установки выполни:
+Единая команда (с pre-flight):
+```bash
+make install
+```
 
+После установки:
 ```bash
 source ~/.bashrc
 ```
 
+---
+
+## Makefile — точки входа
+
+| Команда | Действие |
+|---------|----------|
+| `make check` | Pre-flight: ОС, sudo, диск, интернет, Node.js |
+| `make install` | Полная установка (с предпроверкой) |
+| `make verify` | Пост-проверка: файлы, checksums, команды |
+| `make dry-run` | Сухой прогон — что будет сделано |
+| `make uninstall` | Полное удаление всех компонентов |
+| `make backup` | Бэкап текущих конфигов в `/tmp/` |
+| `make clean` | Очистка логов установки |
+| `make help` | Справка по целям |
+
+Установщик также поддерживает флаги:
+- `./install.sh --dry-run` — просмотр без изменений
+- `./install.sh --resume-from=5` — продолжить с шага 5
+- `./install.sh --skip-preflight` — без предпроверки
+
+---
+
 ## Что устанавливается
 
-### 1. KiloCode CLI
+### 1. KiloCode CLI (`~/.kilo/`)
+- @kilocode/cli (глобально через npm)
+- 3 агента: `ble-engineer`, `russian-dev`, `gatt-recovery`
+- 3 команды: `ble-capture`, `ble-setup`, `gatt-discover`
+- 3 инструмента: `ble-scan`, `hex-analyzer`, `gatt-to-yaml`
+- Инструкции и навыки
 
-- `@kilocode/cli` (глобально через npm)
-- Проектная конфигурация → `~/.kilo/`
-- Глобальная конфигурация → `~/.config/kilo/`
-- Агенты, команды, инструменты, инструкции, навыки
+### 2. Глобальная конфигурация (`~/.config/kilo/`)
+- AGENTS.md — правила для всех сессий Kilo
+- Агент `russian-dev` (русскоязычный)
+- Инструкции и настройки
 
-### 2. Системные компоненты
+### 3. Системные компоненты
+- Node.js 22 LTS (через NodeSource)
+- Python 3.12+, bluez-tools, Git, tshark, cmake
 
-| Компонент | Версия | Источник |
-|-----------|--------|----------|
-| Node.js | 22 LTS | NodeSource |
-| npm | последняя | NodeSource |
-| Python | 3.12+ | apt |
-| bluez-tools | последняя | apt |
-| Git | последняя | apt |
-
-### 3. BLE Engineering проект
-
-- Структура `~/ble-project/` с поддиректориями
-- Скрипты активации окружения
+### 4. BLE Engineering (`~/ble-project/`)
+- Скрипты `setup-env.sh`, `activate.sh`
 - Python-зависимости (bleak, bumble, bleson)
+- Структура для логов, GATT-профилей, прошивок
 
-### 4. Системные настройки
-
+### 5. Системные настройки
 - SSH-конфигурация (GitHub, GitLab)
-- Shell-алиасы (.bashrc)
-- Git-конфигурация (user.name, user.email, defaultBranch)
-- PATH в .profile
+- Алиасы в `.bashrc`: `ble-activate`, `ble-env`, `ble-project`
+- Git config: user.name, user.email, defaultBranch
+- PATH в `.profile`
+
+---
 
 ## Структура репозитория
 
 ```
 K_I_L_O/
-├── install.sh                      # Главный установщик
-├── README.md                       # Документация
-├── AGENTS.md                       # Правила для Kilo-сессий
-├── src/                            # Установочные файлы
-│   ├── dot-kilo/                   # → ~/.kilo/
-│   │   ├── kilo.jsonc
-│   │   ├── agents/
-│   │   ├── commands/
-│   │   ├── tools/
-│   │   ├── instructions/
-│   │   └── skills/
-│   ├── dot-config-kilo/            # → ~/.config/kilo/
-│   │   ├── kilo.jsonc
-│   │   ├── AGENTS.md
-│   │   ├── agents/
-│   │   └── instructions/
-│   ├── dot-local-share-kilo/       # → ~/.local/share/kilo/
+│
+├── Makefile              # Точка входа: install, check, verify, uninstall
+├── install.sh            # Главный установщик (13 шагов)
+├── uninstall.sh          # Полный откат
+│
+├── scripts/              # Скрипты автоматизации
+│   ├── lib.sh            #   Общая библиотека (цвета, backup, manifest)
+│   ├── preflight.sh      #   Pre-flight проверка системы
+│   └── verify.sh         #   Пост-установочная валидация
+│
+├── src/                  # Исходники для установки на новую систему
+│   ├── dot-kilo/                  # → ~/.kilo/
+│   │   ├── kilo.jsonc, agents/, commands/, tools/, instructions/, skills/
+│   ├── dot-config-kilo/           # → ~/.config/kilo/
+│   │   ├── kilo.jsonc, AGENTS.md, agents/, instructions/
+│   ├── dot-local-share-kilo/      # → ~/.local/share/kilo/
 │   │   └── auth.template.json
-│   ├── dot-ssh/                    # → ~/.ssh/
-│   │   ├── config
-│   │   └── id_ed25519.pub
-│   └── bashrc-append.sh           # Дополнения .bashrc
-├── .kilo/                          # Конфигурация для разработки установщика
-├── ble-project/                    # BLE-инженерия
-│   ├── scripts/
-│   ├── logs/
-│   └── ...
-└── .gitignore
+│   ├── dot-ssh/                   # → ~/.ssh/
+│   │   ├── config, id_ed25519.pub
+│   ├── bashrc-append.sh           # → ~/.bashrc (дополнения)
+│   └── profile-append.sh          # → ~/.profile (дополнения)
+│
+├── .kilo/                # Dev-конфигурация для разработки установщика
+├── ble-project/          # BLE-проект (копируется в ~/ble-project/)
+│
+├── AGENTS.md             # Правила для Kilo-сессий
+├── .gitignore
+└── README.md
 ```
+
+---
 
 ## Агенты KiloCode
 
@@ -96,17 +124,16 @@ K_I_L_O/
 | `russian-dev` | primary | Русскоязычный ассистент разработки |
 | `gatt-recovery` | subagent | GATT profile recovery из BLE-трафика |
 
-## Настройка после установки
+---
 
-### 1. API-ключ
+## После установки
 
-Получи API-ключ на [https://app.kilo.ai/settings](https://app.kilo.ai/settings) и сохрани:
+### API-ключ
 
 ```bash
 nano ~/.local/share/kilo/auth.json
 ```
 
-Формат:
 ```json
 {
   "opencode": {
@@ -116,7 +143,7 @@ nano ~/.local/share/kilo/auth.json
 }
 ```
 
-### 2. SSH-ключи
+### SSH-ключи
 
 Скопируй приватный ключ `id_ed25519` в `~/.ssh/`:
 
@@ -124,7 +151,7 @@ nano ~/.local/share/kilo/auth.json
 chmod 600 ~/.ssh/id_ed25519
 ```
 
-### 3. BLE-окружение
+### BLE-окружение
 
 ```bash
 cd ~/ble-project
@@ -132,17 +159,19 @@ cd ~/ble-project
 source scripts/activate.sh
 ```
 
+---
+
 ## Требования
 
-- **ОС:** Linux Mint 21.x / 22.x (или Ubuntu 22.04+)
-- **Права:** sudo (для установки пакетов)
+- **ОС:** Linux Mint 21.x / 22.x или Ubuntu 22.04+
+- **Права:** sudo
 - **Интернет:** для загрузки зависимостей
 
 ## Разработка
 
 Если ты разрабатываешь этот установщик в KiloCode:
 
-1. Этот репозиторий клонирован как `~/K_I_L_O/` (или `/tmp/kilo-install/`)
-2. В корне лежит `AGENTS.md` — правила для сессий Kilo
-3. `.kilo/` — конфигурация для разработки установщика
-4. `src/` — исходники для установки на новую систему
+1. Репозиторий клонируется в `/tmp/kilo-install/` или `~/K_I_L_O/`
+2. `AGENTS.md` в корне — правила для Kilo-сессий
+3. `.kilo/` — конфигурация для разработки установщика (не путать с `src/dot-kilo/`)
+4. `src/` — исходники, которые `install.sh` копирует на целевую систему

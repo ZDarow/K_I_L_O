@@ -1,36 +1,48 @@
 # BLE Engineering Project
 
-Создано агентом `ble-engineer`.
-
-## Статус окружения (текущая сессия)
-
-- **ОС:** Linux Mint 22.3 (Ubuntu 24.04)
-- **BlueZ:** установлен (bluetoothctl, btmon, gatttool, hciconfig)
-- **Bluetooth-сервис:** неактивен (systemctl start bluetooth)
-- **BLE-адаптер:** не обнаружен
-- **Python:** 3.12, без pip (требуется sudo apt install python3.12-venv)
-- **tshark, cmake:** не установлены
+BLE-проект для реверс-инжиниринга Bluetooth Low Energy устройств.
+Устанавливается в `~/ble-project/` установщиком KiloCode CLI.
 
 ## Быстрый старт
 
 ```bash
-# Установка всего окружения
+# Настройка Python-окружения
 ./scripts/setup-env.sh
 
-# Активация Python-окружения
+# Активация виртуального окружения
 source .venv/bin/activate
+
+# Или через alias (после source ~/.bashrc)
+ble-activate
 ```
 
 ## Структура
 
 ```
 ble-project/
-├── logs/        # btmon/btsnoop/PCAP
-├── gatt/        # Восстановленные GATT-профили
-├── protocol/    # Спецификации протоколов
-├── firmware/    # ESP32 код
-├── android/     # Android-приложения
-├── bluez/       # Linux-агенты/плагины
-├── scripts/     # Скрипты анализа
-└── docs/        # Документация
+├── scripts/       # Скрипты настройки и анализа
+├── logs/          # btmon/btsnoop/PCAP логи
+├── gatt/          # Восстановленные GATT-профили
+├── protocol/      # Спецификации протоколов
+├── firmware/      # ESP32 код и прошивки
+├── android/       # Android-приложения/сервисы
+├── bluez/         # Linux-агенты/плагины BlueZ
+└── docs/          # Итоговая документация
 ```
+
+## Зависимости
+
+Устанавливаются через `install.sh` или вручную:
+
+```bash
+# Системные
+sudo apt install bluez bluez-tools bluez-hcidump tshark cmake python3-venv
+
+# Python
+pip install bleak bumble bleson pygatt bluepy
+```
+
+## Агенты KiloCode
+
+- `ble-engineer` — BLE/Bluetooth reverse engineering (ESP32, Android, BlueZ)
+- `gatt-recovery` — GATT profile recovery из BLE-трафика

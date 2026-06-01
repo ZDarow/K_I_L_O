@@ -1,37 +1,14 @@
-# System
-.bash_history
-.bash_logout
-.cache/
-.config/
-.local/
-.npm/
-.nvm/
-.pki/
-.var/
-.vscode/
-.vscode-shared/
+# Системные и пользовательские файлы (домашняя директория)
+.*
+!.gitignore
+!.config/
+!.kilo/
 
-# Python
-ble-project/.venv/
-__pycache__/
-*.pyc
+# Временные и кэш-файлы
+*~
+*.swp
+*.swo
+*.bak
 
-# OS
-Видео/
-Документы/
-Загрузки/
-Изображения/
-Музыка/
-Общедоступные/
-Рабочий стол/
-Шаблоны/
-"backup Linux/"
-
-# Kilo installer — логи и node_modules
+# Логи
 *.log
-node_modules/
-
-# Защита — приватные ключи в src/dot-ssh (если случайно добавят)
-/src/dot-ssh/id_ed25519
-/src/dot-ssh/id_rsa
-/src/dot-ssh/id_dsa
