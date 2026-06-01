@@ -1,0 +1,28 @@
+# System
+.bash_history
+.bash_logout
+.cache/
+.config/
+.local/
+.npm/
+.nvm/
+.pki/
+.var/
+.vscode/
+.vscode-shared/
+
+# Python
+ble-project/.venv/
+__pycache__/
+*.pyc
+
+# OS
+Видео/
+Документы/
+Загрузки/
+Изображения/
+Музыка/
+Общедоступные/
+Рабочий стол/
+Шаблоны/
+"backup Linux/"
