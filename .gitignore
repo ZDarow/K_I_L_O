@@ -26,3 +26,12 @@ __pycache__/
 Рабочий стол/
 Шаблоны/
 "backup Linux/"
+
+# Kilo installer — логи и node_modules
+*.log
+node_modules/
+
+# Защита — приватные ключи в src/dot-ssh (если случайно добавят)
+/src/dot-ssh/id_ed25519
+/src/dot-ssh/id_rsa
+/src/dot-ssh/id_dsa
