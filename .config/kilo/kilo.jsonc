@@ -4,7 +4,7 @@
   "default_agent": "dev",
   "instructions": [
     "AGENTS.md",
-    ".kilo/instructions/*.md"
+    ".config/kilo/instructions/*.md"
   ],
   "auto_collapse_reasoning": true,
   "compaction": {

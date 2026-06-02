@@ -1,8 +1,26 @@
 # Системные и пользовательские файлы (домашняя директория)
 .*
 !.gitignore
-!.config/
 !.kilo/
+
+# Kilo-конфиг внутри .config/ (остальное игнорируется)
+!.config/
+.config/*
+!.config/kilo/
+
+# Репозиторий установщика — отслеживаемые файлы
+!.gitignore
+!AGENTS.md
+!Makefile
+!README.md
+!install.sh
+!uninstall.sh
+!LICENSE
+
+# Директории репозитория
+!scripts/
+!src/
+!ble-project/
 
 # Временные и кэш-файлы
 *~
@@ -12,3 +30,28 @@
 
 # Логи
 *.log
+
+# Бинарные пакеты и медиа
+*.deb
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.ico
+*.pdf
+
+# Неинтегрированная библиотека (src/dot-kilo)
+/src/dot-kilo/
+
+# Пользовательские директории и файлы (НЕ для git)
+/Pro_logy/
+/v2rayN-russia-setup/
+/backup Linux/
+/Загрузки/
+/Изображения/
+/Рабочий стол/
+/check_kilocode.sh
+/full_network_diag.sh
+/network_full_diag.sh
+/port_dpi_check.sh
+/my_report.txt
