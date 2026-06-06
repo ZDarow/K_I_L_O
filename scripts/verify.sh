@@ -120,7 +120,6 @@ check_cmd gatttool || true
 # ─── Аутентификация ─────────────────────────────
 subheader "Аутентификация"
 if [ -f "$HOME/.local/share/kilo/auth.json" ]; then
-    local key_count
     key_count=$(python3 -c "
 import json
 try:
