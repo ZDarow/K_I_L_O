@@ -166,7 +166,7 @@ fi
 # ─── Checksum-проверка (если есть manifest) ─────
 subheader "Целостность файлов"
 if [ -f "$MANIFEST_FILE" ]; then
-    local errors=0
+    errors=0
     python3 -c "
 import json, hashlib, os, sys
 with open('$MANIFEST_FILE') as f:
