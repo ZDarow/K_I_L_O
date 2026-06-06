@@ -7,6 +7,22 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$SCRIPT_DIR/scripts/lib.sh"
 
+# Восстанавливаем BACKUP_DIR из манифеста установки (если есть)
+if [ -f "$MANIFEST_FILE" ]; then
+    saved_backup=$(python3 -c "
+import json, sys
+try:
+    with open('$MANIFEST_FILE') as f:
+        m = json.load(f)
+    print(m.get('configs', {}).get('backup_dir', ''))
+except:
+    pass
+" 2>/dev/null || true)
+    if [ -n "$saved_backup" ] && [ -d "$saved_backup" ]; then
+        BACKUP_DIR="$saved_backup"
+    fi
+fi
+
 # Сухой прогон
 if [ "${1:-}" = "--dry-run" ]; then
     INSTALL_DRY_RUN=1

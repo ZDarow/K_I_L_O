@@ -73,6 +73,7 @@ if [ "$INSTALL_DRY_RUN" = "0" ]; then
     manifest_set_config "src_dir" "$SRC_DIR"
     manifest_set_config "os" "$(uname -s)"
     manifest_set_config "host" "$(hostname 2>/dev/null || echo 'unknown')"
+    manifest_set_config "backup_dir" "$BACKUP_DIR"
 fi
 
 # ─── Функция шага с resume ───────────────────────
@@ -112,6 +113,10 @@ detect_os() {
 step 2 "Установка системных зависимостей" install_system_deps
 
 install_system_deps() {
+    if dry_run "установка системных пакетов"; then
+        return 0
+    fi
+
     # Node.js (через NodeSource)
     if ! command -v node &>/dev/null; then
         warn "Node.js не найден. Устанавливаю Node.js 22 LTS..."
@@ -378,11 +383,11 @@ install_ble_project() {
         cp -r "$SCRIPT_DIR/ble-project/"* "$HOME/ble-project/" 2>/dev/null || true
     fi
 
+    # Создаём пустые поддиректории BLE
+    mkdir -p "$HOME/ble-project"/{logs,gatt,protocol,firmware,android,bluez,docs}
+
     log "BLE-проект установлен"
 }
-
-# Создаём пустые поддиректории BLE
-mkdir -p "$HOME/ble-project"/{logs,gatt,protocol,firmware,android,bluez,docs}
 
 # ═══════════════════════════════════════════════════
 # Шаг 11: Установка npm-зависимостей Kilo
@@ -395,21 +400,15 @@ install_npm_deps() {
     fi
 
     if [ -f "$HOME/.kilo/package.json" ]; then
-        cd "$HOME/.kilo"
-        if npm install 2>&1 | tail -3 | tee -a "$LOG_FILE"; then
-            log "npm-зависимости ~/.kilo/ установлены"
-        else
+        (cd "$HOME/.kilo" && npm install 2>&1 | tail -3 | tee -a "$LOG_FILE") && \
+            log "npm-зависимости ~/.kilo/ установлены" || \
             warn "npm install в ~/.kilo/ завершился с ошибками"
-        fi
     fi
 
     if [ -f "$HOME/.config/kilo/package.json" ]; then
-        cd "$HOME/.config/kilo"
-        if npm install 2>&1 | tail -3 | tee -a "$LOG_FILE"; then
-            log "npm-зависимости ~/.config/kilo/ установлены"
-        else
+        (cd "$HOME/.config/kilo" && npm install 2>&1 | tail -3 | tee -a "$LOG_FILE") && \
+            log "npm-зависимости ~/.config/kilo/ установлены" || \
             warn "npm install в ~/.config/kilo/ завершился с ошибками"
-        fi
     fi
 }
 
@@ -423,19 +422,16 @@ configure_git() {
         return 0
     fi
 
-    # Только если ещё не настроено
-    if [ -z "$(git config --global user.name 2>/dev/null)" ]; then
-        git config --global user.name "ZDarow"
-        log "Git user.name установлен"
-    else
-        log "Git user.name уже настроен: $(git config --global user.name)"
-    fi
+    # Проверяем глобальную конфигурацию Git, но НЕ навязываем персональные данные
+    local name email
+    name="$(git config --global user.name 2>/dev/null || true)"
+    email="$(git config --global user.email 2>/dev/null || true)"
 
-    if [ -z "$(git config --global user.email 2>/dev/null)" ]; then
-        git config --global user.email "zdarow@github.com"
-        log "Git user.email установлен"
+    if [ -n "$name" ] && [ -n "$email" ]; then
+        log "Git настроен: $name <$email>"
     else
-        log "Git user.email уже настроен: $(git config --global user.email)"
+        warn "Git user.name или user.email не настроены глобально."
+        warn "Настрой вручную: git config --global user.name \"Имя\" && git config --global user.email \"email@example.com\""
     fi
 
     git config --global init.defaultBranch master 2>/dev/null || true

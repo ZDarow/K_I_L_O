@@ -53,6 +53,14 @@ else
     ALL_OK=false
 fi
 
+# ─── curl/wget ──────────────────────────────────
+subheader "Инструменты загрузки"
+if command -v curl &>/dev/null; then
+    log "curl доступен"
+else
+    warn "curl не найден — будет установлен (требуется для NodeSource)"
+fi
+
 # ─── Интернет ───────────────────────────────────
 subheader "Подключение к интернету"
 if command -v curl &>/dev/null; then

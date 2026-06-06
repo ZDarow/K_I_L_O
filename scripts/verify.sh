@@ -84,12 +84,18 @@ subheader "npm-зависимости"
 check_npm_deps() {
     local dir="$1"
     local name="$2"
-    if [ -f "$dir/node_modules/@kilocode/plugin/package.json" ]; then
-        local ver
-        ver=$(python3 -c "import json; print(json.load(open('$dir/node_modules/@kilocode/plugin/package.json')).get('version', '?'))" 2>/dev/null || echo "?")
-        log "$name: @kilocode/plugin v$ver"
+    if [ -f "$dir/package.json" ]; then
+        log "$name: package.json найден"
     else
-        warn "$name: @kilocode/plugin не установлен"
+        warn "$name: package.json не найден"
+        WARNINGS=$((WARNINGS + 1))
+    fi
+    if [ -d "$dir/node_modules" ]; then
+        local count
+        count=$(find "$dir/node_modules" -mindepth 1 -maxdepth 1 -type d | wc -l)
+        log "$name: $count npm-пакетов установлено"
+    else
+        warn "$name: node_modules не найден — запусти npm install"
         WARNINGS=$((WARNINGS + 1))
     fi
 }

@@ -138,17 +138,17 @@ manifest_add_file() {
     if [ -f "$path" ]; then
         csum=$(sha256sum "$path" | cut -d' ' -f1)
     fi
-    # Используем временный файл для атомарного обновления JSON
     local tmpf
     tmpf=$(mktemp)
     python3 -c "
-import json
-with open('$MANIFEST_FILE') as f:
+import json, sys
+manifest_path, file_path, checksum, tmp_path = sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4]
+with open(manifest_path) as f:
     m = json.load(f)
-m['files'].append({'path': '$path', 'checksum': '$csum'})
-with open('$tmpf', 'w') as f:
+m['files'].append({'path': file_path, 'checksum': checksum})
+with open(tmp_path, 'w') as f:
     json.dump(m, f, indent=2)
-" 2>/dev/null || true
+" "$MANIFEST_FILE" "$path" "$csum" "$tmpf" 2>/dev/null || true
     mv "$tmpf" "$MANIFEST_FILE"
 }
 
@@ -158,13 +158,15 @@ manifest_set_config() {
     local tmpf
     tmpf=$(mktemp)
     python3 -c "
-import json
-with open('$MANIFEST_FILE') as f:
+import json, sys
+manifest_path, tmp_path = sys.argv[1], sys.argv[2]
+key, val = sys.argv[3], sys.argv[4]
+with open(manifest_path) as f:
     m = json.load(f)
-m['configs']['$key'] = '$val'
-with open('$tmpf', 'w') as f:
+m['configs'][key] = val
+with open(tmp_path, 'w') as f:
     json.dump(m, f, indent=2)
-" 2>/dev/null || true
+" "$MANIFEST_FILE" "$tmpf" "$key" "$val" 2>/dev/null || true
     mv "$tmpf" "$MANIFEST_FILE"
 }
 
