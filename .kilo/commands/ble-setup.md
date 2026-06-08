@@ -1,5 +1,7 @@
 ---
 description: Setup BLE development environment (ESP32, Android, BlueZ)
+version: 1.0.0
+agent: ble-engineer
 ---
 
 # BLE Setup — автонастройка окружения

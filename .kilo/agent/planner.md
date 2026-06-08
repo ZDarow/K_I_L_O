@@ -1,6 +1,7 @@
 ---
 name: planner
 description: Специалист по планированию реализации задач с выбором подхода (Standard, Two, Hard, CRO, CI)
+version: 1.0.0
 mode: subagent
 temperature: 0.3
 skills:

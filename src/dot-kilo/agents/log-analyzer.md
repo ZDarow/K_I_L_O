@@ -1,5 +1,7 @@
 ---
+name: log-analyzer
 description: Анализатор логов — парсинг, фильтрация, поиск паттернов, агрегация ошибок, отчёты
+version: 1.0.0
 mode: subagent
 temperature: 0.1
 permission:

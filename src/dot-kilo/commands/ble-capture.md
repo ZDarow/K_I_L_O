@@ -1,5 +1,6 @@
 ---
 description: Capture and analyze BLE traffic
+version: 1.0.0
 agent: ble-engineer
 ---
 

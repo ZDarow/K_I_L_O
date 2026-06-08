@@ -1,5 +1,7 @@
 ---
 description: Создать коммит с проверкой diff и подтверждением пользователя
+version: 1.0.0
+agent: git-specialist
 ---
 
 # Git Commit

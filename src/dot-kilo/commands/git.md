@@ -1,5 +1,7 @@
 ---
 description: Git operations with security scan and auto-commit (Git Manager Agent)
+version: 1.0.0
+agent: git-specialist
 ---
 
 # 📦 GIT MANAGER AGENT

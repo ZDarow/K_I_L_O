@@ -1,5 +1,7 @@
 ---
 description: Управление ветками — создание, переключение, слияние, удаление
+version: 1.0.0
+agent: git-specialist
 ---
 
 # Git Branch

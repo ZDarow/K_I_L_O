@@ -40,9 +40,6 @@
 *.ico
 *.pdf
 
-# Неинтегрированная библиотека (src/dot-kilo)
-/src/dot-kilo/
-
 # Пользовательские директории и файлы (НЕ для git)
 /Pro_logy/
 /v2rayN-russia-setup/

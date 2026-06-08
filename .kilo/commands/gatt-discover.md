@@ -1,5 +1,7 @@
 ---
 description: Run GATT discovery on a BLE device, save profile to YAML/JSON
+version: 1.0.0
+agent: dev
 ---
 
 # GATT Discovery

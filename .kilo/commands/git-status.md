@@ -1,5 +1,7 @@
 ---
 description: Показать состояние репозитория — статус, изменения, ветки, последние коммиты
+version: 1.0.0
+agent: git-specialist
 ---
 
 # Git Status

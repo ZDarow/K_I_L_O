@@ -1,5 +1,7 @@
 ---
 description: Create and run tests with coverage analysis (Tester Agent)
+version: 1.0.0
+agent: dev
 ---
 
 # 🧪 TESTER AGENT

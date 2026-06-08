@@ -1,6 +1,8 @@
 ---
 name: adb-specialist
 description: "Эксперт по работе с Android устройствами через ADB — подключение, отладка, установка APK, логи, скриншоты, файловый менеджер, shell, root доступ, беспроводное подключение, скрипты автоматизации."
+version: 1.0.0
+tags: [android, adb, debugging, automation, mobile]
 ---
 
 # ADB Specialist

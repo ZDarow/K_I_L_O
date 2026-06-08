@@ -1,5 +1,7 @@
 ---
+name: sys-inspector
 description: Инспектор системы Linux — анализ процессов, дисков, сети, памяти, логов и производительности
+version: 1.0.0
 mode: subagent
 temperature: 0.1
 permission:

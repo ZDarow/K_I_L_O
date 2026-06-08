@@ -139,7 +139,7 @@ manifest_add_file() {
         csum=$(sha256sum "$path" | cut -d' ' -f1)
     fi
     local tmpf
-    tmpf=$(mktemp)
+    tmpf=$(mktemp) || return 1
     python3 -c "
 import json, sys
 manifest_path, file_path, checksum, tmp_path = sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4]
@@ -156,7 +156,7 @@ manifest_set_config() {
     local key="$1"
     local val="$2"
     local tmpf
-    tmpf=$(mktemp)
+    tmpf=$(mktemp) || return 1
     python3 -c "
 import json, sys
 manifest_path, tmp_path = sys.argv[1], sys.argv[2]

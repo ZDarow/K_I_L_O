@@ -1,5 +1,7 @@
 ---
+name: doc-scribe
 description: Документатор — создание и поддержка документации, README, API-гайдов, технических статей
+version: 1.0.0
 mode: subagent
 temperature: 0.2
 permission:
@@ -8,7 +10,6 @@ permission:
   write: allow
   glob: allow
   grep: allow
-  bash: deny
 ---
 
 ## Роль и назначение

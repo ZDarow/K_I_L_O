@@ -1,5 +1,7 @@
 ---
+name: debugger
 description: Отладчик — анализ ошибок, стектрейсов, поиск корневых причин и рекомендации по исправлению
+version: 1.0.0
 mode: subagent
 temperature: 0.2
 ---

@@ -1,5 +1,7 @@
 ---
 description: Review code quality with severity categories (Code Reviewer Agent)
+version: 1.0.0
+agent: reviewer
 ---
 
 # 👁️ CODE REVIEWER AGENT

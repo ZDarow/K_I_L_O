@@ -1,5 +1,7 @@
 ---
+name: reviewer
 description: Ревьюер кода — проверка качества, безопасности, производительности и архитектуры кода
+version: 1.0.0
 mode: subagent
 temperature: 0.2
 ---

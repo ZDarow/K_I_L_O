@@ -1,6 +1,9 @@
 ---
 name: ble-engineering
 description: Bluetooth/BLE протоколы, реинжениринг, GATT recovery, ESP32/Android/BlueZ разработка, общая разработка ПО
+version: 1.0.0
+tags: [bluetooth, ble, gatt, esp32, android, bluez, embedded, reverse-engineering]
+tools_required: [bluetoothctl, btmon, gatttool, hcitool, esptool]
 ---
 
 # BLE Engineering — универсальный навык

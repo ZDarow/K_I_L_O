@@ -1,5 +1,7 @@
 ---
 description: Capture and analyze BLE traffic via btmon
+version: 1.0.0
+agent: ble-engineer
 ---
 
 # BLE Capture

@@ -1,5 +1,7 @@
 ---
 description: Build Flutter project — pub get, analyze, test, build APK/Linux
+version: 1.0.0
+agent: dev
 ---
 
 # Flutter Build

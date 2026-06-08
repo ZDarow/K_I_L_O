@@ -1,5 +1,7 @@
 ---
 description: Debug and fix issues with structured analysis (Debugger Agent)
+version: 1.0.0
+agent: debugger
 ---
 
 # 🐛 DEBUGGER AGENT

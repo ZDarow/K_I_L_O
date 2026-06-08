@@ -1,5 +1,7 @@
 ---
+name: russian-dev
 description: 'Мержирован в dev — используй /agent dev'
+version: 1.0.0
 mode: subagent
 deprecated: true
 ---

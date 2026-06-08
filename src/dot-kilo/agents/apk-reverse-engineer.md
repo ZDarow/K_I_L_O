@@ -1,6 +1,7 @@
 ---
 name: apk-reverse-engineer
 description: Специалист по декомпиляции APK и анализу Android-приложений, с фокусом на поиск Bluetooth-соединений (BLE, Classic Bluetooth)
+version: 1.0.0
 mode: subagent
 temperature: 0.3
 skills:

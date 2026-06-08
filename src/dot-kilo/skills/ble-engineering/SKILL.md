@@ -1,6 +1,9 @@
 ---
 name: ble-engineering
 description: Bluetooth/BLE protocol analysis, reverse engineering, and implementation for ESP32, Android, and BlueZ platforms. Use for BLE traffic analysis, GATT recovery, driver implementation, and multi-platform BLE development.
+version: 1.0.0
+tags: [bluetooth, ble, gatt, esp32, android, bluez, embedded, reverse-engineering]
+tools_required: [bluetoothctl, btmon, gatttool, hcitool, esptool]
 ---
 
 # BLE Engineering Skill

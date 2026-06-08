@@ -1,5 +1,7 @@
 ---
 description: Create detailed implementation plans (Planner Agent)
+version: 1.0.0
+agent: planner
 ---
 
 # 📋 PLANNER AGENT

@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Активация окружения BLE Engineering
 # Использование: source ./scripts/activate.sh
+set -euo pipefail
 
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 if [ ! -f "$DIR/.venv/bin/activate" ]; then

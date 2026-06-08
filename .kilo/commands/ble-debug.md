@@ -1,5 +1,7 @@
 ---
 description: Debug BLE connection to any device — scan, connect, discover GATT, send commands, read notifications
+version: 1.0.0
+agent: ble-engineer
 ---
 
 # BLE Debug

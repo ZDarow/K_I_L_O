@@ -1,5 +1,6 @@
 ---
 description: Run GATT discovery on a BLE device and save profile
+version: 1.0.0
 agent: gatt-recovery
 ---
 

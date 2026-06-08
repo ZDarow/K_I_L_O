@@ -1,6 +1,7 @@
 ---
 name: esp32-arduino-specialist
 description: Специалист по Arduino CLI и ESP32 — прошивки, модули, архитектура, отладка
+version: 1.0.0
 mode: subagent
 temperature: 0.3
 ---
