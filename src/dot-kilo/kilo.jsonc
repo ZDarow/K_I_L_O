@@ -2,7 +2,6 @@
   "$schema": "https://app.kilo.ai/config.json",
   "username": "BLE Engineer",
   "default_agent": "dev",
-  "model": "anthropic/claude-sonnet-4-20250514",
   "instructions": [
     "AGENTS.md",
     ".kilo/instructions/*.md",
