@@ -6,12 +6,12 @@ SHELL := /bin/bash
 .ONESHELL:
 
 # ─── Пути к инструментам ─────────────────────────
-YAMLLINT := $(shell command -v yamllint 2>/dev/null || echo "$HOME/.local/bin/yamllint")
+YAMLLINT := $(shell command -v yamllint 2>/dev/null || echo "$$HOME/.local/bin/yamllint")
 SHELLCHECK := $(shell command -v shellcheck 2>/dev/null || echo "")
 BATS := $(shell command -v bats 2>/dev/null || echo "")
-ACTIONLINT := $(shell command -v actionlint 2>/dev/null || echo "$HOME/go/bin/actionlint")
-SHFMT := $(shell command -v shfmt 2>/dev/null || echo "$HOME/go/bin/shfmt")
-PRECOMMIT := $(shell command -v pre-commit 2>/dev/null || echo "$HOME/.local/bin/pre-commit")
+ACTIONLINT := $(shell command -v actionlint 2>/dev/null || echo "$$HOME/go/bin/actionlint")
+SHFMT := $(shell command -v shfmt 2>/dev/null || echo "$$HOME/go/bin/shfmt")
+PRECOMMIT := $(shell command -v pre-commit 2>/dev/null || echo "$$HOME/.local/bin/pre-commit")
 MARKDOWNLINT := $(shell command -v markdownlint 2>/dev/null || echo "")
 
 # ─── Цели ────────────────────────────────────────
