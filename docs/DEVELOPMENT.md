@@ -28,9 +28,8 @@ K_I_L_O/                     # Рабочий репозиторий
 │   ├── bashrc-append.sh     # → ~/.bashrc
 │   └── profile-append.sh    # → ~/.profile
 │
-├── scripts/                 # Скрипты установщика
-├── install.sh               # Главный установщик
-├── uninstall.sh             # Деинсталлятор
+├── scripts/lib.sh           # Общие функции
+├── install.sh               # Установщик (install —check —verify —uninstall)
 └── Makefile                 # Точка входа
 ```
 
@@ -164,17 +163,17 @@ make uninstall
 Проект не содержит автоматических тестов (unit-тестов). Ручное тестирование:
 
 ```bash
-# Проверка preflight
-bash scripts/preflight.sh
+# Pre-flight проверка
+bash install.sh --check
 
-# Проверка verify
-bash scripts/verify.sh
+# Пост-установочная проверка
+bash install.sh --verify
 
-# Проверка установки в dry-run режиме
-bash install.sh --dry-run
+# Сухой прогон установки
+bash install.sh --dry-run --skip-preflight
 
-# Проверка удаления в dry-run режиме
-bash uninstall.sh --dry-run
+# Сухой прогон удаления
+bash install.sh --uninstall --dry-run
 ```
 
 ---
@@ -259,10 +258,9 @@ bats tests/
 | Файл | Что тестирует |
 |------|---------------|
 | `tests/test_lib.bats` | scripts/lib.sh (логирование, проверки, бэкап, manifest, dry-run) |
-| `tests/test_preflight.bats` | scripts/preflight.sh (структура, синтаксис) |
-| `tests/test_verify.bats` | scripts/verify.sh (структура, синтаксис) |
-| `tests/test_install.bats` | install.sh (12 шагов, dry-run, resume, функции) |
-| `tests/test_uninstall.bats` | uninstall.sh (синтаксис, dry-run) |
+| `tests/test_preflight.bats` | install.sh --check |
+| `tests/test_verify.bats` | install.sh --verify |
+| `tests/test_uninstall.bats` | install.sh --uninstall |
 | `tests/test_sync.bats` | Синхронизация src/kilo-config/ и .kilo/ |
 
 ### Docker-контейнер

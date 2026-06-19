@@ -21,14 +21,14 @@ setup() {
   [ "$errors" -eq 0 ]
 }
 
-@test "все агенты присутствуют в обоих наборах" {
+@test "агенты синхронизированы" {
   for agent in dev git-specialist debugger doc-scribe log-analyzer planner reviewer sys-inspector; do
     [ -f "$PROJECT_DIR/src/kilo-config/agent/$agent.md" ] || {
-      echo "Missing src/kilo-config/agent/$agent.md"
+      echo "Missing src: $agent"
       false
     }
     [ -f "$PROJECT_DIR/.kilo/agent/$agent.md" ] || {
-      echo "Missing .kilo/agent/$agent.md"
+      echo "Missing .kilo: $agent"
       false
     }
   done

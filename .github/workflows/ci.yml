@@ -23,10 +23,6 @@ jobs:
         run: |
           echo "=== Проверка install.sh ==="
           shellcheck -x -Calways install.sh
-          echo "=== Проверка uninstall.sh ==="
-          shellcheck -x -Calways uninstall.sh
-          echo "=== Проверка scripts/ ==="
-          shellcheck -x -Calways scripts/*.sh
           echo "=== Проверка src/ ==="
           shellcheck -x -Calways src/bashrc-append.sh src/profile-append.sh
           echo "=== Проверка tests/ ==="
@@ -109,6 +105,15 @@ jobs:
 
       - name: Сухой прогон
         run: bash install.sh --dry-run --skip-preflight
+
+  check-system:
+    name: Pre-flight проверка
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Pre-flight проверка
+        run: bash install.sh --check
 
   check-manifest-sync:
     name: Проверка синхронизации src/kilo-config и .kilo

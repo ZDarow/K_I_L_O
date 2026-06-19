@@ -37,7 +37,7 @@
 
 ## Компоненты системы
 
-### 1. Установщик (`install.sh`, `uninstall.sh`, `Makefile`)
+### 1. Установщик (`install.sh`, `Makefile`)
 
 Скрипты автоматической установки и удаления KiloCode CLI и всех зависимостей.
 
@@ -65,8 +65,8 @@
 | Файл | Описание |
 |------|----------|
 | `lib.sh` | Общая библиотека: цвета, логирование, бэкап, dry-run, manifest |
-| `preflight.sh` | Pre-flight проверка системы перед установкой |
-| `verify.sh` | Пост-установочная валидация целостности |
+| install.sh --check | Pre-flight проверка системы |
+| install.sh --verify | Пост-установочная валидация |
 
 ### 3. Конфигурация KiloCode (`.kilo/`)
 
@@ -86,7 +86,6 @@ Dev-конфигурация для разработки установщика.
 | `src/kilo-config/` | `~/.kilo/` — проектная конфигурация Kilo |
 | `src/global-config/` | `~/.config/kilo/` — глобальная конфигурация Kilo |
 | `src/local-share/` | `~/.local/share/kilo/` — auth.json |
-| `src/ssh/` | `~/.ssh/` — SSH config + публичный ключ |
 | `src/bashrc-append.sh` | `~/.bashrc` — алиасы и дополнения |
 | `src/profile-append.sh` | `~/.profile` — PATH |
 
@@ -99,7 +98,7 @@ Dev-конфигурация для разработки установщика.
     │
     ├── make install
     │       │
-    │       ├── make check (preflight.sh)
+    │       ├── make check (install.sh --check)
     │       │       ├── Проверка ОС (Linux Mint 21+ / Ubuntu 22.04+)
     │       │       ├── Проверка sudo
     │       │       ├── Проверка интернета
@@ -116,14 +115,11 @@ Dev-конфигурация для разработки установщика.
     │               ├── Шаг 5:  ~/.kilo/ ← src/kilo-config/
     │               ├── Шаг 6:  ~/.config/kilo/ ← src/global-config/
     │               ├── Шаг 7:  auth.json
-    │               ├── Шаг 8:  SSH-конфигурация
-    │               ├── Шаг 9:  .bashrc + .profile
-    │               ├── Шаг 10: npm install
-    │               ├── Шаг 11: git config --global
-    │               └── Шаг 12: verify
+    │               ├── Шаг 8:  .bashrc + .profile
+    │               ├── Шаг 9:  npm install
+    │               └── Шаг 10: git config --global
     │
-    └── make verify
-            └── verify.sh
+    └── make verify (install.sh --verify)
                     ├── Проверка manifest.json
                     ├── Проверка конфигурационных файлов
                     ├── Проверка Node.js экосистемы

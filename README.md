@@ -102,30 +102,21 @@ source ~/.bashrc
 ```text
 K_I_L_O/
 │
-├── Makefile              # Точка входа: install, check, verify, uninstall
-├── install.sh            # Главный установщик (12 шагов, resume, dry-run)
-├── uninstall.sh          # Полный откат с восстановлением бэкапов
+├── Makefile              # Точка входа
+├── install.sh            # Установщик (install / --check / --verify / --uninstall)
+├── scripts/lib.sh        # Общие функции (цвета, backup, manifest)
 │
-├── scripts/              # Скрипты автоматизации
-│   ├── lib.sh            #   Общая библиотека (цвета, backup, manifest)
-│   ├── preflight.sh      #   Pre-flight проверка системы
-│   └── verify.sh         #   Пост-установочная валидация
-│
-├── src/                  # Исходники для установки на новую систему
-│   ├── kilo-config/      #   → ~/.kilo/ (проектная конфигурация)
+├── src/                  # Исходники для установки
+│   ├── kilo-config/      #   → ~/.kilo/
 │   ├── global-config/    #   → ~/.config/kilo/
 │   ├── local-share/      #   → ~/.local/share/kilo/
-│   ├── ssh/              #   → ~/.ssh/
 │   ├── bashrc-append.sh  #   → ~/.bashrc
 │   └── profile-append.sh #   → ~/.profile
 │
-├── .kilo/                # Dev-конфигурация Kilo для разработки
-├── ble-backup/           # Резервная копия BLE-компонентов
+├── .kilo/                # Dev-конфигурация Kilo
 │
 ├── docs/                 # Документация
-│   ├── ARCHITECTURE.md   #   Архитектура проекта
-│   ├── AGENTS.md         #   Каталог агентов
-│   ├── COMMANDS.md       #   Каталог команд
+│   ├── ARCHITECTURE.md   #   Архитектура
 │   ├── CONFIGURATION.md  #   Конфигурация
 │   ├── SCRIPTS.md        #   Скрипты установщика
 │   ├── DEVELOPMENT.md    #   Инструкция для разработчиков

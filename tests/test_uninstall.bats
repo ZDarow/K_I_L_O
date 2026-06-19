@@ -1,23 +1,17 @@
 #!/usr/bin/env bats
-# Тесты для uninstall.sh
+# Тесты для install.sh --uninstall
 
 setup() {
   SCRIPT_DIR="$(cd "$(dirname "$BATS_TEST_FILENAME")/.." && pwd)"
-  load "$SCRIPT_DIR/scripts/lib.sh"
 }
 
-@test "uninstall.sh существует" {
-  [ -f "$SCRIPT_DIR/uninstall.sh" ]
-}
-
-@test "uninstall.sh загружается без синтаксических ошибок" {
-  run bash -n "$SCRIPT_DIR/uninstall.sh"
+@test "install.sh загружается без синтаксических ошибок" {
+  run bash -n "$SCRIPT_DIR/install.sh"
   [ "$status" -eq 0 ]
 }
 
-@test "uninstall.sh поддерживает --dry-run" {
-  # Устанавливаем INSTALL_DRY_RUN=1 чтобы избежать запроса подтверждения
-  run bash -c "INSTALL_DRY_RUN=1 bash '$SCRIPT_DIR/uninstall.sh' --dry-run"
+@test "install.sh --uninstall --dry-run выполняется" {
+  run bash "$SCRIPT_DIR/install.sh" --uninstall --dry-run --skip-preflight
   [ "$status" -eq 0 ]
-  [[ "$output" == *"сухой прогон"* ]] || [[ "$output" == *"dry-run"* ]] || [[ "$output" == *"DRY-RUN"* ]]
+  [[ "$output" == *"Удаление"* ]]
 }

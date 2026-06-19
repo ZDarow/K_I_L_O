@@ -68,7 +68,7 @@ LOG_FILE="/tmp/kilo-install-$(date +%Y%m%d-%H%M%S).log"
 
 ---
 
-## Pre-flight скрипт `scripts/preflight.sh`
+## Pre-flight (`install.sh --check`)
 
 **Размер:** 150 строк  
 **Назначение:** Проверка системы перед установкой.
@@ -105,7 +105,7 @@ subheader "Python"                   # Проверка Python
 
 ---
 
-## Verify скрипт `scripts/verify.sh`
+## Verify (`install.sh --verify`)
 
 **Размер:** 205 строк  
 **Назначение:** Пост-установочная верификация.
@@ -186,16 +186,12 @@ step() {
 
 ---
 
-## Uninstall скрипт `uninstall.sh`
+## Uninstall (`install.sh --uninstall`)
 
-**Размер:** 160 строк  
-**Назначение:** Полное удаление KiloCode.
+...
 
-### Аргументы
-
-```bash
-./uninstall.sh              # Полное удаление (с подтверждением)
-./uninstall.sh --dry-run    # Просмотр что будет удалено
+./install.sh --uninstall              # Полное удаление (с подтверждением)
+./install.sh --uninstall --dry-run    # Просмотр что будет удалено
 ```
 
 ### Что удаляется
