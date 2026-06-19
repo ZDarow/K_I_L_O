@@ -9,6 +9,7 @@
 **Причина:** Одно из требований не выполнено.
 
 **Решение:**
+
 ```bash
 # Проверить ОС
 cat /etc/os-release
@@ -31,6 +32,7 @@ df -h ~
 **Причина:** Проблемы с NodeSource репозиторием.
 
 **Решение:**
+
 ```bash
 # Установить Node.js вручную
 curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash -
@@ -46,6 +48,7 @@ nvm install 22
 **Причина:** Отсутствует package.json или проблемы с сетью.
 
 **Решение:**
+
 ```bash
 cd ~/.kilo
 npm install
@@ -58,6 +61,7 @@ npm install --legacy-peer-deps
 **Причина:** Обрыв соединения, сигнал SIGINT.
 
 **Решение:**
+
 ```bash
 # Продолжить с шага N
 ./install.sh --resume-from=5
@@ -73,6 +77,7 @@ npm install --legacy-peer-deps
 **Причина:** Отсутствует приватный ключ или неправильные права.
 
 **Решение:**
+
 ```bash
 # Скопировать приватный ключ
 # (должен быть предоставлен отдельно)
@@ -87,6 +92,7 @@ chmod 700 ~/.ssh
 **Причина:** SSH-ключ не добавлен в GitHub/GitLab.
 
 **Решение:**
+
 ```bash
 # Показать публичный ключ
 cat ~/.ssh/id_ed25519.pub
@@ -103,6 +109,7 @@ cat ~/.ssh/id_ed25519.pub
 **Причина:** KiloCode CLI не установлен глобально.
 
 **Решение:**
+
 ```bash
 # Установить вручную
 npm install -g @kilocode/cli
@@ -116,6 +123,7 @@ npx --yes @kilocode/cli
 **Причина:** В `auth.json` не заменён ключ.
 
 **Решение:**
+
 ```bash
 nano ~/.local/share/kilo/auth.json
 # Заменить "YOUR_API_KEY_HERE" на реальный API-ключ
@@ -126,6 +134,7 @@ nano ~/.local/share/kilo/auth.json
 **Причина:** Отсутствует файл агента или ошибка в YAML-фронтматере.
 
 **Решение:**
+
 ```bash
 # Проверить наличие файла
 ls -la ~/.kilo/agent/dev.md
@@ -143,6 +152,7 @@ head -10 ~/.kilo/agent/dev.md
 **Причина:** Не выполнен `source ~/.bashrc`.
 
 **Решение:**
+
 ```bash
 source ~/.bashrc
 ```
@@ -152,6 +162,7 @@ source ~/.bashrc
 **Причина:** Не выполнен `source ~/.profile`.
 
 **Решение:**
+
 ```bash
 source ~/.profile
 ```
@@ -165,6 +176,7 @@ source ~/.profile
 **Причина:** make не установлен.
 
 **Решение:**
+
 ```bash
 sudo apt-get install -y build-essential
 ```
@@ -178,6 +190,7 @@ sudo apt-get install -y build-essential
 **Причина:** uninstall.sh не удалил все компоненты.
 
 **Решение:**
+
 ```bash
 # Удалить вручную
 rm -rf ~/.kilo

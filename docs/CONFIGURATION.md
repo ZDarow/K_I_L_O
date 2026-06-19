@@ -9,6 +9,7 @@
 Расположение: `.kilo/kilo.jsonc` (dev) / `~/.kilo/kilo.jsonc` (целевая система)
 
 **Структура:**
+
 ```jsonc
 {
   "$schema": "https://app.kilo.ai/config.json",

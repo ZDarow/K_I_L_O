@@ -134,7 +134,7 @@ teardown() {
   manifest_init
   run python3 -c "import json; m=json.load(open('$MANIFEST_FILE')); print(m['version'])"
   [ "$status" -eq 0 ]
-  [[ "$output" == "1.1.0" ]]
+  [[ "$output" == "1.2.0" ]]
 }
 
 @test "manifest_add_file: добавляет файл в manifest" {

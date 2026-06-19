@@ -40,5 +40,5 @@ repos:
     rev: v0.49.0
     hooks:
       - id: markdownlint
-        args: ["--config", ".markdownlint.yml", "--ignore", "node_modules", "--ignore", ".kilo", "--ignore", ".config", "--ignore", "ble-backup"]
+        args: ["--config", ".markdownlint.yml", "--ignore", "node_modules", "--ignore", ".kilo", "--ignore", ".config", "--ignore", "src/kilo-config"]
         files: \.md$

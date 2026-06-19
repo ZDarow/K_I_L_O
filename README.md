@@ -30,11 +30,13 @@ make verify    # Проверка целостности
 ```
 
 Единая команда (с pre-flight):
+
 ```bash
 make install
 ```
 
 После установки:
+
 ```bash
 source ~/.bashrc
 ```
@@ -150,9 +152,11 @@ K_I_L_O/
 ## После установки
 
 ### 1. Настройка API-ключа
+
 ```bash
 nano ~/.local/share/kilo/auth.json
 ```
+
 ```json
 {
   "opencode": {
@@ -164,16 +168,19 @@ nano ~/.local/share/kilo/auth.json
 
 ### 2. SSH-ключи
 Скопируй приватный ключ `id_ed25519` в `~/.ssh/`:
+
 ```bash
 chmod 600 ~/.ssh/id_ed25519
 ```
 
 ### 3. Запуск Kilo
+
 ```bash
 npx kilo
 ```
 
 Или через алиас (после `source ~/.bashrc`):
+
 ```bash
 kilo
 ```

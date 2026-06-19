@@ -10,8 +10,10 @@ setup() {
   [ "$status" -eq 0 ]
 }
 
-@test "install.sh --uninstall --dry-run выполняется" {
+@test "install.sh --uninstall --dry-run выполняется без интерактива" {
   run bash "$SCRIPT_DIR/install.sh" --uninstall --dry-run --skip-preflight
   [ "$status" -eq 0 ]
   [[ "$output" == *"Удаление"* ]]
+  # --dry-run обходит read, поэтому не должно быть запроса подтверждения
+  [[ "$output" != *"Продолжить"* ]]
 }

@@ -26,12 +26,10 @@
 # Директории репозитория
 !scripts/
 !src/
-!ble-project/
 !docs/
 !.github/
 !tests/
-!Dockerfile
-!CHANGELOG.md
+!docker/
 
 # Временные и кэш-файлы
 *~

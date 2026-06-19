@@ -72,6 +72,7 @@ check_system() {
   subheader "ОС"
   if [[ -f /etc/os-release ]]; then
     . /etc/os-release
+    # shellcheck disable=SC2153
     echo "  $NAME $VERSION_ID ($(uname -m))"
   fi
 

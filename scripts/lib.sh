@@ -16,7 +16,7 @@ NC='\033[0m'
 BOLD='\033[1m'
 
 # ---- Конфигурация ----
-KILO_VERSION="1.1.0"
+KILO_VERSION="1.2.0"
 MANIFEST_DIR="$HOME/.local/share/kilo"
 MANIFEST_FILE="$MANIFEST_DIR/manifest.json"
 BACKUP_DIR="/tmp/kilo-backup-$(date +%Y%m%d-%H%M%S)"
