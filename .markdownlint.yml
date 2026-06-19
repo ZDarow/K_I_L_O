@@ -1,0 +1,34 @@
+# MarkdownLint configuration for K_I_L_O project
+
+# Отключить проверку длины строк (много технической документации с длинными строками)
+MD013: false
+
+# Разрешить вложенные списки без пустых строк (иногда удобно)
+MD032: false
+
+# Разрешить заголовки без пустых строк вокруг
+MD022: false
+
+# Требовать язык в fenced code блоках
+MD040:
+  allowed_languages:
+    - bash
+    - shell
+    - python
+    - yaml
+    - json
+    - typescript
+    - js
+    - text
+    - diff
+    - jsonc
+    - markdown
+
+# Таблицы — компактный стиль (без лишних пробелов в ячейках)
+MD060:
+  style: compact
+
+# Концевые пробелы — разрешить 2 для форматирования
+MD009:
+  br_spaces: 2
+  strict: false

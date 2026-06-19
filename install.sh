@@ -9,7 +9,7 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # Загрузка общей библиотеки
-if [ -f "$SCRIPT_DIR/scripts/lib.sh" ]; then
+if [[ -f "$SCRIPT_DIR/scripts/lib.sh" ]]; then
     source "$SCRIPT_DIR/scripts/lib.sh"
 else
     # Fallback — ручное определение, если lib.sh ещё нет
@@ -27,7 +27,7 @@ INSTALL_DRY_RUN=0
 RESUME_FROM=1
 SKIP_PREFLIGHT=0
 
-while [ $# -gt 0 ]; do
+while [[ $# -gt 0 ]]; do
     case "$1" in
         --dry-run)      INSTALL_DRY_RUN=1; shift ;;
         --resume-from)  RESUME_FROM="$2"; shift 2 ;;
@@ -41,7 +41,7 @@ done
 trap_install
 
 # ─── Dry-run режим ───────────────────────────────
-if [ "$INSTALL_DRY_RUN" = "1" ]; then
+if [[ "$INSTALL_DRY_RUN" = "1" ]]; then
     echo -e "${YELLOW}"
     echo "╔══════════════════════════════════════════╗"
     echo "║  KiloCode CLI — СУХОЙ ПРОГОН             ║"
@@ -60,7 +60,7 @@ fi
 echo "Лог: $LOG_FILE"
 
 # ─── Pre-flight ──────────────────────────────────
-if [ "$SKIP_PREFLIGHT" = "0" ] && [ -f "$SCRIPT_DIR/scripts/preflight.sh" ]; then
+if [[ "$SKIP_PREFLIGHT" = "0" ]] && [[ -f "$SCRIPT_DIR/scripts/preflight.sh" ]]; then
     "$SCRIPT_DIR/scripts/preflight.sh" || {
         error "Pre-flight проверка не пройдена. Исправь проблемы и запусти снова."
         exit 1
@@ -68,7 +68,7 @@ if [ "$SKIP_PREFLIGHT" = "0" ] && [ -f "$SCRIPT_DIR/scripts/preflight.sh" ]; the
 fi
 
 # ─── Инициализация манифеста ─────────────────────
-if [ "$INSTALL_DRY_RUN" = "0" ]; then
+if [[ "$INSTALL_DRY_RUN" = "0" ]]; then
     manifest_init
     manifest_set_config "src_dir" "$SRC_DIR"
     manifest_set_config "os" "$(uname -s)"
@@ -85,20 +85,20 @@ step() {
     local num="$1"
     local desc="$2"
     shift 2
-    if [ "$num" -lt "$RESUME_FROM" ]; then
+    if [[ "$num" -lt "$RESUME_FROM" ]]; then
         echo -e "  ${YELLOW}[ПРОПУСК]${NC} Шаг $num: $desc (resume-from=$RESUME_FROM)"
         return 0
     fi
     header "Шаг $num: $desc"
     "$@"
-    if [ "$INSTALL_DRY_RUN" = "0" ]; then
+    if [[ "$INSTALL_DRY_RUN" = "0" ]]; then
         manifest_set_config "last_step" "$num"
     fi
 }
 
 # ─── Шаг 1: Детекция ОС ──────────────────────────
 detect_os() {
-    if [ -f /etc/os-release ]; then
+    if [[ -f /etc/os-release ]]; then
         . /etc/os-release
         echo "  ОС: $NAME $VERSION_ID"
         echo "  Архитектура: $(uname -m)"
@@ -127,13 +127,12 @@ install_system_deps() {
     run_sudo "system packages" apt-get install -y -qq \
         python3 python3-pip python3-venv python3-dev \
         git curl wget build-essential \
-        bluez bluez-tools bluez-hcidump \
-        tshark cmake \
+        cmake \
         libglib2.0-dev || true
     log "Системные пакеты установлены"
 
-    if [ "$INSTALL_DRY_RUN" = "0" ]; then
-        manifest_set_config "packages" "nodejs python3 bluez git"
+    if [[ "$INSTALL_DRY_RUN" = "0" ]]; then
+        manifest_set_config "packages" "nodejs python3 git"
     fi
 }
 
@@ -156,19 +155,18 @@ install_kilocode() {
 
 # ─── Шаг 4: Создание структуры директорий ─────────
 create_dirs() {
-    dry_run "mkdir -p $HOME/.kilo $HOME/.config/kilo $HOME/.local/share/kilo $HOME/.ssh $HOME/.npm $HOME/ble-project" && return 0
+    dry_run "mkdir -p $HOME/.kilo $HOME/.config/kilo $HOME/.local/share/kilo $HOME/.ssh $HOME/.npm" && return 0
     mkdir -p "$HOME/.kilo"
     mkdir -p "$HOME/.config/kilo"
     mkdir -p "$HOME/.local/share/kilo"
     mkdir -p "$HOME/.ssh"
     mkdir -p "$HOME/.npm"
-    mkdir -p "$HOME/ble-project"
     log "Директории созданы"
 }
 
 # ─── Шаг 5: Копирование проектной конфигурации Kilo ──
 install_dot_kilo() {
-    if [ ! -d "$SRC_DIR/dot-kilo" ]; then
+    if [[ ! -d "$SRC_DIR/dot-kilo" ]]; then
         warn "Источник src/dot-kilo/ не найден, пропускаю"
         return 0
     fi
@@ -178,7 +176,7 @@ install_dot_kilo() {
     fi
 
     # Бэкап существующей конфигурации
-    if [ -f "$HOME/.kilo/kilo.jsonc" ]; then
+    if [[ -f "$HOME/.kilo/kilo.jsonc" ]]; then
         backup_file "$HOME/.kilo"
     fi
 
@@ -198,7 +196,7 @@ install_dot_kilo() {
 
 # ─── Шаг 6: Копирование глобальной конфигурации Kilo ──
 install_dot_config_kilo() {
-    if [ ! -d "$SRC_DIR/dot-config-kilo" ]; then
+    if [[ ! -d "$SRC_DIR/dot-config-kilo" ]]; then
         warn "Источник src/dot-config-kilo/ не найден, пропускаю"
         return 0
     fi
@@ -208,7 +206,7 @@ install_dot_config_kilo() {
     fi
 
     # Бэкап существующей конфигурации
-    if [ -f "$HOME/.config/kilo/kilo.jsonc" ]; then
+    if [[ -f "$HOME/.config/kilo/kilo.jsonc" ]]; then
         backup_file "$HOME/.config/kilo"
     fi
 
@@ -227,7 +225,7 @@ install_dot_config_kilo() {
 
 # ─── Шаг 7: Установка шаблона auth.json ───────────
 install_auth() {
-    if [ ! -f "$SRC_DIR/dot-local-share-kilo/auth.template.json" ]; then
+    if [[ ! -f "$SRC_DIR/dot-local-share-kilo/auth.template.json" ]]; then
         warn "Шаблон auth.json не найден, пропускаю"
         return 0
     fi
@@ -236,7 +234,7 @@ install_auth() {
         return 0
     fi
 
-    if [ ! -f "$HOME/.local/share/kilo/auth.json" ]; then
+    if [[ ! -f "$HOME/.local/share/kilo/auth.json" ]]; then
         cp "$SRC_DIR/dot-local-share-kilo/auth.template.json" "$HOME/.local/share/kilo/auth.json"
         manifest_add_file "$HOME/.local/share/kilo/auth.json"
         warn "Шаблон auth.json установлен. Замени API-ключ в ~/.local/share/kilo/auth.json"
@@ -247,16 +245,16 @@ install_auth() {
 
 # ─── Шаг 8: Настройка SSH ─────────────────────────
 install_ssh() {
-    if [ ! -d "$SRC_DIR/dot-ssh" ]; then
+    if [[ ! -d "$SRC_DIR/dot-ssh" ]]; then
         warn "Источник src/dot-ssh/ не найден, пропускаю"
         return 0
     fi
 
     # SSH config
-    if [ -f "$SRC_DIR/dot-ssh/config" ]; then
+    if [[ -f "$SRC_DIR/dot-ssh/config" ]]; then
         if dry_run "cp $SRC_DIR/dot-ssh/config $HOME/.ssh/config && chmod 600 $HOME/.ssh/config"; then
             :
-        elif [ ! -f "$HOME/.ssh/config" ]; then
+        elif [[ ! -f "$HOME/.ssh/config" ]]; then
             backup_file "$HOME/.ssh/config" 2>/dev/null || true
             cp "$SRC_DIR/dot-ssh/config" "$HOME/.ssh/config"
             chmod 600 "$HOME/.ssh/config"
@@ -268,10 +266,10 @@ install_ssh() {
     fi
 
     # Публичный ключ
-    if [ -f "$SRC_DIR/dot-ssh/id_ed25519.pub" ]; then
+    if [[ -f "$SRC_DIR/dot-ssh/id_ed25519.pub" ]]; then
         if dry_run "cp $SRC_DIR/dot-ssh/id_ed25519.pub $HOME/.ssh/id_ed25519.pub && chmod 644 $HOME/.ssh/id_ed25519.pub"; then
             :
-        elif [ ! -f "$HOME/.ssh/id_ed25519.pub" ]; then
+        elif [[ ! -f "$HOME/.ssh/id_ed25519.pub" ]]; then
             cp "$SRC_DIR/dot-ssh/id_ed25519.pub" "$HOME/.ssh/id_ed25519.pub"
             chmod 644 "$HOME/.ssh/id_ed25519.pub"
             log "SSH публичный ключ установлен"
@@ -289,7 +287,7 @@ install_shell_config() {
     local f
 
     # .bashrc
-    if [ -f "$SRC_DIR/bashrc-append.sh" ]; then
+    if [[ -f "$SRC_DIR/bashrc-append.sh" ]]; then
         if dry_run "добавить дополнения KiloCode в .bashrc"; then
             :
         elif ! grep -q "KiloCode CLI" "$HOME/.bashrc" 2>/dev/null; then
@@ -309,7 +307,7 @@ install_shell_config() {
     fi
 
     # .profile
-    if [ -f "$SRC_DIR/profile-append.sh" ]; then
+    if [[ -f "$SRC_DIR/profile-append.sh" ]]; then
         if dry_run "добавить дополнения KiloCode в .profile"; then
             :
         elif ! grep -q "KiloCode CLI" "$HOME/.profile" 2>/dev/null; then
@@ -329,43 +327,19 @@ install_shell_config() {
     fi
 }
 
-# ─── Шаг 10: Установка BLE-проекта ────────────────
-install_ble_project() {
-    if [ ! -d "$SCRIPT_DIR/ble-project" ]; then
-        warn "BLE-проект не найден в репозитории, пропускаю"
-        return 0
-    fi
-
-    if dry_run "скопировать ble-project/ (без .venv)"; then
-        return 0
-    fi
-
-    # Копируем всё кроме .venv (rsync предпочтительнее)
-    if command -v rsync &>/dev/null; then
-        rsync -a --exclude='.venv' "$SCRIPT_DIR/ble-project/" "$HOME/ble-project/" 2>/dev/null || true
-    else
-        cp -r "$SCRIPT_DIR/ble-project/"* "$HOME/ble-project/" 2>/dev/null || true
-    fi
-
-    # Создаём пустые поддиректории BLE
-    mkdir -p "$HOME/ble-project"/{logs,gatt,protocol,firmware,android,bluez,docs}
-
-    log "BLE-проект установлен"
-}
-
-# ─── Шаг 11: Установка npm-зависимостей Kilo ──────
+# ─── Шаг 10: Установка npm-зависимостей Kilo ──────
 install_npm_deps() {
     if dry_run "npm install в ~/.kilo/ и ~/.config/kilo/"; then
         return 0
     fi
 
-    if [ -f "$HOME/.kilo/package.json" ]; then
+    if [[ -f "$HOME/.kilo/package.json" ]]; then
         (cd "$HOME/.kilo" && npm install 2>&1 | tail -3 | tee -a "$LOG_FILE") && \
             log "npm-зависимости ~/.kilo/ установлены" || \
             warn "npm install в ~/.kilo/ завершился с ошибками"
     fi
 
-    if [ -f "$HOME/.config/kilo/package.json" ]; then
+    if [[ -f "$HOME/.config/kilo/package.json" ]]; then
         (cd "$HOME/.config/kilo" && npm install 2>&1 | tail -3 | tee -a "$LOG_FILE") && \
             log "npm-зависимости ~/.config/kilo/ установлены" || \
             warn "npm install в ~/.config/kilo/ завершился с ошибками"
@@ -383,7 +357,7 @@ configure_git() {
     name="$(git config --global user.name 2>/dev/null || true)"
     email="$(git config --global user.email 2>/dev/null || true)"
 
-    if [ -n "$name" ] && [ -n "$email" ]; then
+    if [[ -n "$name" ]] && [[ -n "$email" ]]; then
         log "Git настроен: $name <$email>"
     else
         warn "Git user.name или user.email не настроены глобально."
@@ -396,7 +370,7 @@ configure_git() {
 
 # ─── Шаг 13: Проверка установки ───────────────────
 verify_installation() {
-    if [ "$INSTALL_DRY_RUN" = "1" ]; then
+    if [[ "$INSTALL_DRY_RUN" = "1" ]]; then
         echo "  Сухой прогон завершён. Ничего не изменено."
         return 0
     fi
@@ -408,7 +382,6 @@ verify_installation() {
     check_cmd npx || true
     check_cmd git || true
     check_cmd python3 || true
-    check_cmd bluetoothctl || true
 
     echo ""
     echo -e "  ${GREEN}Конфигурационные файлы:${NC}"
@@ -417,7 +390,7 @@ verify_installation() {
              "$HOME/.config/kilo/AGENTS.md" \
              "$HOME/AGENTS.md" \
              "$HOME/.local/share/kilo/manifest.json"; do
-        if [ -f "$f" ]; then
+        if [[ -f "$f" ]]; then
             log "  $f"
         else
             warn "  $f — не найден"
@@ -442,17 +415,16 @@ step 6 "Установка глобальной конфигурации Kilo (~
 step 7 "Настройка аутентификации" install_auth
 step 8 "Настройка SSH" install_ssh
 step 9 "Обновление shell-конфигурации" install_shell_config
-step 10 "Настройка BLE Engineering проекта" install_ble_project
-step 11 "Установка npm-зависимостей Kilo" install_npm_deps
-step 12 "Настройка Git" configure_git
-step 13 "Проверка установки" verify_installation
+step 10 "Установка npm-зависимостей Kilo" install_npm_deps
+step 11 "Настройка Git" configure_git
+step 12 "Проверка установки" verify_installation
 
 # ═══════════════════════════════════════════════════
 # Завершение
 # ═══════════════════════════════════════════════════
 header "Установка завершена"
 
-if [ "$INSTALL_DRY_RUN" = "1" ]; then
+if [[ "$INSTALL_DRY_RUN" = "1" ]]; then
     echo ""
     echo -e "  ${YELLOW}Это был сухой прогон. Ничего не изменено.${NC}"
     echo -e "  ${YELLOW}Для реальной установки запусти без --dry-run${NC}"
@@ -463,8 +435,7 @@ else
     echo "  2. Настрой API-ключ:  nano ~/.local/share/kilo/auth.json"
     echo "  3. Копируй SSH-ключи: ~/.ssh/id_ed25519 (приватный)"
     echo "  4. Запусти Kilo:      npx kilo"
-    echo "  5. BLE-окружение:     cd ~/ble-project && source scripts/activate.sh"
-    echo "  6. Проверка:          make verify"
+    echo "  5. Проверка:          make verify"
     echo ""
     echo -e "  Лог установки: ${YELLOW}$LOG_FILE${NC}"
     echo -e "  Бэкап:         ${YELLOW}$BACKUP_DIR${NC}"

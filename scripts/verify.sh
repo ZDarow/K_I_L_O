@@ -15,7 +15,7 @@ echo ""
 
 # ─── Manifest ───────────────────────────────────
 subheader "Manifest установки"
-if [ -f "$MANIFEST_FILE" ]; then
+if [[ -f "$MANIFEST_FILE" ]]; then
     log "Manifest найден: $MANIFEST_FILE"
     INSTALLED_AT=$(python3 -c "import json; print(json.load(open('$MANIFEST_FILE')).get('installed_at', 'unknown'))" 2>/dev/null || echo "unknown")
     FILES_COUNT=$(python3 -c "import json; print(len(json.load(open('$MANIFEST_FILE')).get('files', [])))" 2>/dev/null || echo "0")
@@ -30,7 +30,7 @@ fi
 subheader "Конфигурация Kilo"
 
 check_file() {
-    if [ -f "$1" ]; then
+    if [[ -f "$1" ]]; then
         log "$1"
     else
         error "$1 — не найден"
@@ -39,7 +39,7 @@ check_file() {
 }
 
 check_dir() {
-    if [ -d "$1" ]; then
+    if [[ -d "$1" ]]; then
         local count
         count=$(find "$1" -type f | wc -l)
         log "$1 ($count файлов)"
@@ -84,13 +84,13 @@ subheader "npm-зависимости"
 check_npm_deps() {
     local dir="$1"
     local name="$2"
-    if [ -f "$dir/package.json" ]; then
+    if [[ -f "$dir/package.json" ]]; then
         log "$name: package.json найден"
     else
         warn "$name: package.json не найден"
         WARNINGS=$((WARNINGS + 1))
     fi
-    if [ -d "$dir/node_modules" ]; then
+    if [[ -d "$dir/node_modules" ]]; then
         local count
         count=$(find "$dir/node_modules" -mindepth 1 -maxdepth 1 -type d | wc -l)
         log "$name: $count npm-пакетов установлено"
@@ -102,24 +102,9 @@ check_npm_deps() {
 check_npm_deps "$HOME/.kilo" "Проектная конфигурация"
 check_npm_deps "$HOME/.config/kilo" "Глобальная конфигурация"
 
-# ─── BLE-проект ─────────────────────────────────
-subheader "BLE Engineering"
-if [ -d "$HOME/ble-project" ]; then
-    log "BLE-проект: $(find "$HOME/ble-project" -type f | wc -l) файлов"
-else
-    warn "BLE-проект не найден"
-    WARNINGS=$((WARNINGS + 1))
-fi
-
-# ─── Инструменты BLE ────────────────────────────
-subheader "BLE-инструменты"
-check_cmd bluetoothctl || true
-check_cmd btmon || true
-check_cmd gatttool || true
-
 # ─── Аутентификация ─────────────────────────────
 subheader "Аутентификация"
-if [ -f "$HOME/.local/share/kilo/auth.json" ]; then
+if [[ -f "$HOME/.local/share/kilo/auth.json" ]]; then
     key_count=$(python3 -c "
 import json
 try:
@@ -128,7 +113,7 @@ try:
     print(len(keys))
 except: print(0)
 " 2>/dev/null || echo "0")
-    if [ "$key_count" -gt 0 ]; then
+    if [[ "$key_count" -gt 0 ]]; then
         log "API-ключи настроены ($key_count)"
     else
         warn "API-ключи не настроены (заглушка в auth.json)"
@@ -141,7 +126,7 @@ fi
 
 # ─── SSH ────────────────────────────────────────
 subheader "SSH"
-if [ -f "$HOME/.ssh/id_ed25519" ]; then
+if [[ -f "$HOME/.ssh/id_ed25519" ]]; then
     log "SSH-ключ id_ed25519 найден"
 else
     warn "SSH-ключ id_ed25519 не найден"
@@ -165,7 +150,7 @@ fi
 
 # ─── Checksum-проверка (если есть manifest) ─────
 subheader "Целостность файлов"
-if [ -f "$MANIFEST_FILE" ]; then
+if [[ -f "$MANIFEST_FILE" ]]; then
     errors=0
     python3 -c "
 import json, hashlib, os, sys
@@ -193,10 +178,10 @@ fi
 
 # ─── Итог ───────────────────────────────────────
 echo ""
-if [ "$ALL_OK" = true ] && [ "$WARNINGS" -eq 0 ]; then
+if [[ "$ALL_OK" = true ]] && [[ "$WARNINGS" -eq 0 ]]; then
     log "Все проверки пройдены. Установка корректна."
     exit 0
-elif [ "$ALL_OK" = true ]; then
+elif [[ "$ALL_OK" = true ]]; then
     warn "Установка завершена с $WARNINGS предупреждениями"
     exit 0
 else

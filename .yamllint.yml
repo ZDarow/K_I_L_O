@@ -1,0 +1,21 @@
+extends: default
+
+rules:
+  # Отключить проверку длины строк (много длинных команд в YAML)
+  line-length: disable
+  # Отключить проверку truthy для GitHub Actions
+  truthy: disable
+  # Отключить проверку document-start (---)
+  document-start: disable
+  # Разрешить пустые значения
+  empty-values: disable
+  # Разрешить комментарии в YAML
+  comments:
+    min-spaces-from-content: 1
+  # Максимум 2 пустые строки
+  empty-lines:
+    max: 2
+  # Отступы — 2 пробела
+  indentation:
+    spaces: 2
+    indent-sequences: consistent

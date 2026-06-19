@@ -57,8 +57,9 @@ require_cmd() {
 # ---- Бекап ----
 backup_file() {
     local src="$1"
-    if [ -f "$src" ] || [ -d "$src" ]; then
-        local dest="$BACKUP_DIR/$(echo "$src" | sed "s|^$HOME/||")"
+    if [[ -f "$src" ]] || [[ -d "$src" ]]; then
+        local dest
+        dest="${BACKUP_DIR}/${src#${HOME}/}"
         mkdir -p "$(dirname "$dest")"
         cp -r "$src" "$dest"
         log_to_file "Backup: $src → $dest"
@@ -69,7 +70,7 @@ backup_file() {
 backup_and_copy() {
     local src="$1"
     local dest="$2"
-    if [ -e "$dest" ]; then
+    if [[ -e "$dest" ]]; then
         backup_file "$dest" >/dev/null
     fi
     mkdir -p "$(dirname "$dest")"
@@ -79,7 +80,7 @@ backup_and_copy() {
 
 # ---- Dry-run ----
 dry_run() {
-    if [ "${INSTALL_DRY_RUN:-0}" = "1" ]; then
+    if [[ "${INSTALL_DRY_RUN:-0}" = "1" ]]; then
         echo -e "  ${YELLOW}[DRY-RUN]${NC} $1"
         return 0
     fi
@@ -131,11 +132,11 @@ EOF
 
 manifest_add_file() {
     local path="$1"
-    if [ ! -f "$MANIFEST_FILE" ]; then
+    if [[ ! -f "$MANIFEST_FILE" ]]; then
         manifest_init
     fi
     local csum=""
-    if [ -f "$path" ]; then
+    if [[ -f "$path" ]]; then
         csum=$(sha256sum "$path" | cut -d' ' -f1)
     fi
     local tmpf

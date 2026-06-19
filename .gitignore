@@ -9,7 +9,6 @@
 !.config/kilo/
 
 # Репозиторий установщика — отслеживаемые файлы
-!.gitignore
 !AGENTS.md
 !Makefile
 !README.md
@@ -17,10 +16,21 @@
 !uninstall.sh
 !LICENSE
 
+# Dot-файлы конфигурации
+!.yamllint.yml
+!.shellcheckrc
+!.markdownlint.yml
+!.nvmrc
+
 # Директории репозитория
 !scripts/
 !src/
 !ble-project/
+!docs/
+!.github/
+!tests/
+!Dockerfile
+!CHANGELOG.md
 
 # Временные и кэш-файлы
 *~

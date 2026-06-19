@@ -14,7 +14,7 @@ echo ""
 
 # ─── ОС ────────────────────────────────────────
 subheader "Операционная система"
-if [ -f /etc/os-release ]; then
+if [[ -f /etc/os-release ]]; then
     . /etc/os-release
     echo "  ОС: $NAME $VERSION_ID"
     echo "  Архитектура: $(uname -m)"
@@ -24,10 +24,10 @@ if [ -f /etc/os-release ]; then
         linuxmint|ubuntu)
             # Версия должна быть 21+ для Mint или 22.04+ для Ubuntu
             MAJOR_VER=$(echo "$VERSION_ID" | cut -d. -f1)
-            if [ "$ID" = "linuxmint" ] && [ "$MAJOR_VER" -lt 21 ]; then
+            if [[ "$ID" = "linuxmint" ]] && [[ "$MAJOR_VER" -lt 21 ]]; then
                 warn "Linux Mint < 21 может иметь несовместимые пакеты"
             fi
-            if [ "$ID" = "ubuntu" ] && [ "$MAJOR_VER" -lt 22 ]; then
+            if [[ "$ID" = "ubuntu" ]] && [[ "$MAJOR_VER" -lt 22 ]]; then
                 warn "Ubuntu < 22.04 может иметь устаревшие пакеты"
             fi
             log "ОС поддерживается"
@@ -83,10 +83,10 @@ subheader "Свободное место"
 if command -v df &>/dev/null; then
     AVAIL_KB=$(df "$HOME" | awk 'NR==2 {print $4}')
     AVAIL_MB=$((AVAIL_KB / 1024))
-    if [ "$AVAIL_MB" -lt 500 ]; then
+    if [[ "$AVAIL_MB" -lt 500 ]]; then
         error "Меньше 500 МБ свободно: ${AVAIL_MB}МБ. Установка может не завершиться."
         ALL_OK=false
-    elif [ "$AVAIL_MB" -lt 1000 ]; then
+    elif [[ "$AVAIL_MB" -lt 1000 ]]; then
         warn "Меньше 1 ГБ свободно: ${AVAIL_MB}МБ"
     else
         log "Свободно: ${AVAIL_MB}МБ"
@@ -98,7 +98,7 @@ subheader "Node.js"
 if command -v node &>/dev/null; then
     NODE_VER=$(node --version | sed 's/v//')
     NODE_MAJOR=$(echo "$NODE_VER" | cut -d. -f1)
-    if [ "$NODE_MAJOR" -lt 18 ]; then
+    if [[ "$NODE_MAJOR" -lt 18 ]]; then
         warn "Node.js $NODE_VER устарел. Рекомендуется 18+"
     else
         log "Node.js $NODE_VER"
@@ -117,11 +117,8 @@ fi
 
 # ─── Конфликты ──────────────────────────────────
 subheader "Проверка конфликтов"
-if [ -f "$HOME/.kilo/kilo.jsonc" ]; then
+if [[ -f "$HOME/.kilo/kilo.jsonc" ]]; then
     warn "Уже существует ~/.kilo/kilo.jsonc — будет перезаписан (создан бэкап)"
-fi
-if [ -d "$HOME/ble-project" ]; then
-    warn "Уже существует ~/ble-project — будет дополнен (без перезаписи)"
 fi
 
 # ─── Python ─────────────────────────────────────
@@ -130,7 +127,7 @@ if command -v python3 &>/dev/null; then
     PY_VER=$(python3 --version 2>&1 | cut -d' ' -f2)
     PY_MAJOR=$(echo "$PY_VER" | cut -d. -f1)
     PY_MINOR=$(echo "$PY_VER" | cut -d. -f2)
-    if [ "$PY_MAJOR" -lt 3 ] || { [ "$PY_MAJOR" -eq 3 ] && [ "$PY_MINOR" -lt 10 ]; }; then
+    if [[ "$PY_MAJOR" -lt 3 ]] || { [[ "$PY_MAJOR" -eq 3 ]] && [[ "$PY_MINOR" -lt 10 ]]; }; then
         warn "Python $PY_VER устарел. Рекомендуется 3.10+"
     else
         log "Python $PY_VER"
@@ -141,7 +138,7 @@ fi
 
 # ─── Итог ───────────────────────────────────────
 echo ""
-if [ "$ALL_OK" = true ]; then
+if [[ "$ALL_OK" = true ]]; then
     log "Все проверки пройдены"
     exit 0
 else

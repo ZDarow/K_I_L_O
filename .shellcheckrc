@@ -1,0 +1,17 @@
+# ShellCheck configuration for K_I_L_O project
+
+# Отключить некоторые предупреждения
+disable=SC1091  # Не проверять подключаемые файлы (source)
+disable=SC1090  # Не проверять пути source-файлов
+disable=SC2154  # Переменные, определённые в других файлах
+disable=SC2034  # Неиспользуемые переменные (цвета, константы)
+disable=SC2317  # Функции, которые вызываются только через trap
+disable=SC2310  # Функции, вызываемые в if/then
+disable=SC2086  # Разделение слов в двойных кавычках (для safe режима)
+
+# Включить дополнительные проверки
+enable=all
+
+# source-path для поиска подключаемых файлов
+source-path=SCRIPTDIR
+source-path=scripts/
