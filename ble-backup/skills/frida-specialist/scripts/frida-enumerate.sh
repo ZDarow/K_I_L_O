@@ -12,7 +12,7 @@ TMPDIR=$(mktemp -d)
 
 # 1. Enumerate classes
 echo "[*] Enumerating loaded classes for $APP..."
-cat > "$TMPDIR/enum_classes.js" << 'JSEOF'
+cat >"$TMPDIR/enum_classes.js" <<'JSEOF'
 Java.perform(function() {
   console.log("[*] Loaded classes containing 'target|crypto|license|key':");
   Java.enumerateLoadedClasses({
@@ -31,7 +31,7 @@ Java.perform(function() {
 JSEOF
 
 # 2. Enumerate exports from loaded native libs
-cat > "$TMPDIR/enum_native.js" << 'JSEOF'
+cat >"$TMPDIR/enum_native.js" <<'JSEOF'
 Java.perform(function() {
   console.log("[*] Loaded native libraries:");
   Process.enumerateModules({

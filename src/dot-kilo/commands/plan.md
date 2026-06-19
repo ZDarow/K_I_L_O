@@ -163,4 +163,3 @@ Save to: `plans/[feature-name]-YYYYMMDD.md`
 ```
 
 > **Key Takeaway:** Planning prevents waste. 10 minutes of analysis saves hours of refactoring.
-

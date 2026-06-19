@@ -182,4 +182,3 @@ const posts = await getPostsByUserIds(users.map(u => u.id));
 ```
 
 > **Key Takeaway:** Code reviewer prevents production incidents by catching security vulnerabilities, type safety violations, and performance issues before merge.
-

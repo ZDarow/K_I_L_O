@@ -35,17 +35,17 @@ unzip -o "$APK" "META-INF/*" -d "$OUT" 2>/dev/null
 # 6. Extract strings from resources.arsc
 if command -v aapt2 &>/dev/null; then
   echo "[+] String resources (aapt2)"
-  aapt2 dump resources "$APK" 2>/dev/null | grep -E "^.*resource.*string/" > "$OUT/string_resources.txt" || true
+  aapt2 dump resources "$APK" 2>/dev/null | grep -E "^.*resource.*string/" >"$OUT/string_resources.txt" || true
 fi
 
 # 7. Hardcoded URLs/IPs
 echo "[+] Scanning for hardcoded endpoints..."
-strings "$APK" | grep -oE 'https?://[a-zA-Z0-9./_-]+' | sort -u > "$OUT/urls.txt"
-strings "$APK" | grep -oE '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}:[0-9]+' | sort -u > "$OUT/endpoints.txt"
+strings "$APK" | grep -oE 'https?://[a-zA-Z0-9./_-]+' | sort -u >"$OUT/urls.txt"
+strings "$APK" | grep -oE '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}:[0-9]+' | sort -u >"$OUT/endpoints.txt"
 
 # 8. Base64-encoded content
 echo "[+] Scanning for potential base64..."
-strings "$APK" | grep -oE '[A-Za-z0-9+/=]{20,}' | sort -u > "$OUT/base64_candidates.txt"
+strings "$APK" | grep -oE '[A-Za-z0-9+/=]{20,}' | sort -u >"$OUT/base64_candidates.txt"
 
 echo "[+] Done. Files:"
 ls -1 "$OUT"/

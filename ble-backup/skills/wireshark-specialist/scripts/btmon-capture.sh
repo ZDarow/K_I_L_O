@@ -6,7 +6,7 @@ set -euo pipefail
 # ============================================================
 
 OUT_DIR="${1:-./bt_captures}"
-DURATION="${2:-}"  # seconds, empty = manual stop
+DURATION="${2:-}" # seconds, empty = manual stop
 
 mkdir -p "$OUT_DIR"
 TS=$(date +%Y%m%d_%H%M%S)

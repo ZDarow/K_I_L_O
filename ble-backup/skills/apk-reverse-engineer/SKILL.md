@@ -160,12 +160,12 @@ frida -U -f com.example.app -l bluetooth_hook.js --no-pause
 ```javascript
 Java.perform(function() {
     var BluetoothAdapter = Java.use("android.bluetooth.BluetoothAdapter");
-    
+
     BluetoothAdapter.enable.overload().implementation = function() {
         console.log("[+] BluetoothAdapter.enable() called");
         return this.enable();
     };
-    
+
     var BluetoothGatt = Java.use("android.bluetooth.BluetoothGatt");
     BluetoothGatt.connect.overload().implementation = function() {
         console.log("[+] BluetoothGatt.connect() called");

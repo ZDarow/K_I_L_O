@@ -227,4 +227,3 @@ git add src/components/*
 - ✅ Backup before risky ops
 
 > **Key Takeaway:** Clean commit history with security-first automation. No leaked secrets, no AI attribution.
-

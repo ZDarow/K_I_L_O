@@ -32,7 +32,7 @@ case "$MODE" in
   android)
     echo "[*] Extracting HCI snoop log from Android device via ADB"
     adb shell "touch /sdcard/btsnoop_hci.log && chmod 644 /sdcard/btsnoop_hci.log"
-    adb shell "cat /sdcard/btsnoop_hci.log" > "${OUT}.btsnoop"
+    adb shell "cat /sdcard/btsnoop_hci.log" >"${OUT}.btsnoop"
     echo "[+] Saved: ${OUT}.btsnoop"
     echo "[*] Or check: /data/misc/bluetooth/logs/btsnoop_hci.log"
     ;;

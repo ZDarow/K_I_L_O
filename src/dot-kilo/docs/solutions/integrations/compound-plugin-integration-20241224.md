@@ -132,7 +132,7 @@ Add **Compound Behaviors** section with:
 
 ### When integrating new plugins
 
-- [ ] Explore first with `/explore` 
+- [ ] Explore first with `/explore`
 - [ ] Compare features to avoid duplication
 - [ ] Review after integration with `/review`
 - [ ] Document with `/compound`

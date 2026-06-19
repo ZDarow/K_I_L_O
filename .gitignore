@@ -18,6 +18,8 @@
 
 # Dot-файлы конфигурации
 !.yamllint.yml
+!.editorconfig
+!.pre-commit-config.yaml
 !.shellcheckrc
 !.markdownlint.yml
 !.nvmrc

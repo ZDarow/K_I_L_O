@@ -6,7 +6,7 @@ last_referenced: "2025-12-23"
 # Antigravity Critical Patterns
 
 > **Required Reading for All Agents**
-> 
+>
 > This document contains critical patterns learned from repeated mistakes.
 > Every agent MUST consult this before generating code.
 

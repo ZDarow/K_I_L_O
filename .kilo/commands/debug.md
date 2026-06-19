@@ -159,4 +159,3 @@ EXPLAIN ANALYZE SELECT ...;
 - **Save as runbook** - reuse for similar issues
 
 > **Key Takeaway:** Turns hours of troubleshooting into 30-minute structured analysis.
-

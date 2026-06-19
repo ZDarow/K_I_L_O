@@ -29,12 +29,12 @@ unzip -o "$APK" "lib/*" -d "$OUT_DIR/native" 2>/dev/null
 
 # 4. Strings
 echo "[*] Extracting strings..."
-strings "$APK" | sort -u > "$OUT_DIR/strings_all.txt"
+strings "$APK" | sort -u >"$OUT_DIR/strings_all.txt"
 
 # 5. APKiD — protection detection
 if command -v apkid &>/dev/null; then
   echo "[*] APKiD scan..."
-  apkid "$APK" > "$OUT_DIR/apkid_report.txt"
+  apkid "$APK" >"$OUT_DIR/apkid_report.txt"
 else
   echo "[!] APKiD not found, skipping"
 fi

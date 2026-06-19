@@ -62,7 +62,7 @@ while IFS='|' read -r location replacement; do
   echo "  [OK] $file_line:$line → $replacement"
   ((SUCCESS++))
 
-done < "$RULES_FILE"
+done <"$RULES_FILE"
 
 echo ""
 echo "[+] Patches applied: $SUCCESS success, $FAIL failed"

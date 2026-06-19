@@ -115,7 +115,7 @@ Raw capture (.pcapng)
 ### Phase 1: Recon & Setup
 1. Identify target interface: `tshark -D`, `hciconfig -a`
 2. Check BT/BLE hardware: `btmgmt info`, `hcitool dev`
-3. Enable monitoring: 
+3. Enable monitoring:
    - BT: `btmon -w capture.hci` or `hcidump -w capture.hci`
    - BLE: `tshark -i bluetooth0 -w capture.pcapng`
    - Android: enable Developer Options → Enable Bluetooth HCI Snoop Log
