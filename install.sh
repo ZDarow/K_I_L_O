@@ -184,13 +184,13 @@ create_dirs() {
 }
 
 # ─── Шаг 5: Копирование проектной конфигурации Kilo ──
-install_dot_kilo() {
-  if [[ ! -d "$SRC_DIR/dot-kilo" ]]; then
-    warn "Источник src/dot-kilo/ не найден, пропускаю"
+install_kilo_config() {
+  if [[ ! -d "$SRC_DIR/kilo-config" ]]; then
+    warn "Источник src/kilo-config/ не найден, пропускаю"
     return 0
   fi
 
-  if dry_run "cp -r $SRC_DIR/dot-kilo/* $HOME/.kilo/"; then
+  if dry_run "cp -r $SRC_DIR/kilo-config/* $HOME/.kilo/"; then
     return 0
   fi
 
@@ -202,25 +202,25 @@ install_dot_kilo() {
   # Копируем каждый файл с проверкой
   local count=0
   while IFS= read -r -d '' f; do
-    local rel="${f#$SRC_DIR/dot-kilo/}"
+    local rel="${f#$SRC_DIR/kilo-config/}"
     local dest="$HOME/.kilo/$rel"
     mkdir -p "$(dirname "$dest")"
     cp "$f" "$dest"
     manifest_add_file "$dest"
     count=$((count + 1))
-  done < <(find "$SRC_DIR/dot-kilo" -type f -print0)
+  done < <(find "$SRC_DIR/kilo-config" -type f -print0)
 
   log "Конфигурация ~/.kilo/ установлена ($count файлов)"
 }
 
 # ─── Шаг 6: Копирование глобальной конфигурации Kilo ──
-install_dot_config_kilo() {
-  if [[ ! -d "$SRC_DIR/dot-config-kilo" ]]; then
-    warn "Источник src/dot-config-kilo/ не найден, пропускаю"
+install_global_config() {
+  if [[ ! -d "$SRC_DIR/global-config" ]]; then
+    warn "Источник src/global-config/ не найден, пропускаю"
     return 0
   fi
 
-  if dry_run "cp -r $SRC_DIR/dot-config-kilo/* $HOME/.config/kilo/"; then
+  if dry_run "cp -r $SRC_DIR/global-config/* $HOME/.config/kilo/"; then
     return 0
   fi
 
@@ -231,30 +231,30 @@ install_dot_config_kilo() {
 
   local count=0
   while IFS= read -r -d '' f; do
-    local rel="${f#$SRC_DIR/dot-config-kilo/}"
+    local rel="${f#$SRC_DIR/global-config/}"
     local dest="$HOME/.config/kilo/$rel"
     mkdir -p "$(dirname "$dest")"
     cp "$f" "$dest"
     manifest_add_file "$dest"
     count=$((count + 1))
-  done < <(find "$SRC_DIR/dot-config-kilo" -type f -print0)
+  done < <(find "$SRC_DIR/global-config" -type f -print0)
 
   log "Конфигурация ~/.config/kilo/ установлена ($count файлов)"
 }
 
 # ─── Шаг 7: Установка шаблона auth.json ───────────
 install_auth() {
-  if [[ ! -f "$SRC_DIR/dot-local-share-kilo/auth.template.json" ]]; then
+  if [[ ! -f "$SRC_DIR/local-share/auth.template.json" ]]; then
     warn "Шаблон auth.json не найден, пропускаю"
     return 0
   fi
 
-  if dry_run "cp $SRC_DIR/dot-local-share-kilo/auth.template.json $HOME/.local/share/kilo/auth.json"; then
+  if dry_run "cp $SRC_DIR/local-share/auth.template.json $HOME/.local/share/kilo/auth.json"; then
     return 0
   fi
 
   if [[ ! -f "$HOME/.local/share/kilo/auth.json" ]]; then
-    cp "$SRC_DIR/dot-local-share-kilo/auth.template.json" "$HOME/.local/share/kilo/auth.json"
+    cp "$SRC_DIR/local-share/auth.template.json" "$HOME/.local/share/kilo/auth.json"
     manifest_add_file "$HOME/.local/share/kilo/auth.json"
     warn "Шаблон auth.json установлен. Замени API-ключ в ~/.local/share/kilo/auth.json"
   else
@@ -264,18 +264,18 @@ install_auth() {
 
 # ─── Шаг 8: Настройка SSH ─────────────────────────
 install_ssh() {
-  if [[ ! -d "$SRC_DIR/dot-ssh" ]]; then
-    warn "Источник src/dot-ssh/ не найден, пропускаю"
+  if [[ ! -d "$SRC_DIR/ssh" ]]; then
+    warn "Источник src/ssh/ не найден, пропускаю"
     return 0
   fi
 
   # SSH config
-  if [[ -f "$SRC_DIR/dot-ssh/config" ]]; then
-    if dry_run "cp $SRC_DIR/dot-ssh/config $HOME/.ssh/config && chmod 600 $HOME/.ssh/config"; then
+  if [[ -f "$SRC_DIR/ssh/config" ]]; then
+    if dry_run "cp $SRC_DIR/ssh/config $HOME/.ssh/config && chmod 600 $HOME/.ssh/config"; then
       :
     elif [[ ! -f "$HOME/.ssh/config" ]]; then
       backup_file "$HOME/.ssh/config" 2>/dev/null || true
-      cp "$SRC_DIR/dot-ssh/config" "$HOME/.ssh/config"
+      cp "$SRC_DIR/ssh/config" "$HOME/.ssh/config"
       chmod 600 "$HOME/.ssh/config"
       manifest_add_file "$HOME/.ssh/config"
       log "SSH config установлен"
@@ -285,11 +285,11 @@ install_ssh() {
   fi
 
   # Публичный ключ
-  if [[ -f "$SRC_DIR/dot-ssh/id_ed25519.pub" ]]; then
-    if dry_run "cp $SRC_DIR/dot-ssh/id_ed25519.pub $HOME/.ssh/id_ed25519.pub && chmod 644 $HOME/.ssh/id_ed25519.pub"; then
+  if [[ -f "$SRC_DIR/ssh/id_ed25519.pub" ]]; then
+    if dry_run "cp $SRC_DIR/ssh/id_ed25519.pub $HOME/.ssh/id_ed25519.pub && chmod 644 $HOME/.ssh/id_ed25519.pub"; then
       :
     elif [[ ! -f "$HOME/.ssh/id_ed25519.pub" ]]; then
-      cp "$SRC_DIR/dot-ssh/id_ed25519.pub" "$HOME/.ssh/id_ed25519.pub"
+      cp "$SRC_DIR/ssh/id_ed25519.pub" "$HOME/.ssh/id_ed25519.pub"
       chmod 644 "$HOME/.ssh/id_ed25519.pub"
       log "SSH публичный ключ установлен"
       warn "Приватный ключ (~/.ssh/id_ed25519) нужно скопировать вручную!"
@@ -429,8 +429,8 @@ step 1 "Детекция системы" detect_os
 step 2 "Установка системных зависимостей" install_system_deps
 step 3 "Установка KiloCode CLI" install_kilocode
 step 4 "Создание структуры директорий" create_dirs
-step 5 "Установка проектной конфигурации Kilo (~/.kilo/)" install_dot_kilo
-step 6 "Установка глобальной конфигурации Kilo (~/.config/kilo/)" install_dot_config_kilo
+step 5 "Установка проектной конфигурации Kilo (~/.kilo/)" install_kilo_config
+step 6 "Установка глобальной конфигурации Kilo (~/.config/kilo/)" install_global_config
 step 7 "Настройка аутентификации" install_auth
 step 8 "Настройка SSH" install_ssh
 step 9 "Обновление shell-конфигурации" install_shell_config

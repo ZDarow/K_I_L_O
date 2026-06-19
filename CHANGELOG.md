@@ -7,6 +7,28 @@
 
 ---
 
+## [1.3.0] — 2026-06-19
+
+### Изменено
+- Переименованы директории `src/` для единообразия:
+  - `src/dot-kilo/` → `src/kilo-config/` (проектная конфигурация)
+  - `src/dot-config-kilo/` → `src/global-config/` (глобальная конфигурация)
+  - `src/dot-local-share-kilo/` → `src/local-share/` (auth.json)
+  - `src/dot-ssh/` → `src/ssh/` (SSH-конфигурация)
+- `Dockerfile` перемещён в `docker/Dockerfile`
+- `src/bashrc-append.sh` — удалены BLE-алиасы
+- `uninstall.sh` — удалена секция BLE-проекта
+- `.shellcheckrc` — отключены шумные стилистические предупреждения
+- Makefile: shellcheck проверяет также `tests/*.bats`
+- CI: shellcheck проверяет также `tests/*.bats`
+
+### Исправлено
+- `tests/test_install.bats` — удалена устаревшая функция `install_ble_project`
+- `Dockerfile` — удалены пакеты bluez/bluez-tools
+- `uninstall.sh` — SC2001 заменён на bash-синтаксис
+
+---
+
 ## [1.2.0] — 2026-06-19
 
 ### Добавлено
@@ -18,9 +40,9 @@
 - Линтеры: shellcheck (.shellcheckrc), yamllint (.yamllint.yml)
 
 ### Исправлено
-- Полная синхронизация src/dot-kilo/ и .kilo/ (переименовано agents/ → agent/)
+- Полная синхронизация src/kilo-config/ и .kilo/ (переименовано agents/ → agent/)
 - Добавлены shebang в src/bashrc-append.sh и src/profile-append.sh
-- Исправлены trailing spaces в src/dot-kilo/docs/solutions/schema.yaml
+- Исправлены trailing spaces в src/kilo-config/docs/solutions/schema.yaml
 - Обновлён .gitignore (новые директории: .github/, tests/, docs/, Dockerfile, CHANGELOG.md)
 
 ---
@@ -37,7 +59,7 @@
 - Makefile цели: lint, test, docker-build, docker-test
 
 ### Исправлено
-- Синхронизация src/dot-kilo/ и .kilo/ (агенты, команды, навыки, инструменты, конфиги)
+- Синхронизация src/kilo-config/ и .kilo/ (агенты, команды, навыки, инструменты, конфиги)
 - .gitignore: добавлены новые директории (.github/, tests/, Dockerfile)
 - Обновлён README.md с актуальной информацией
 

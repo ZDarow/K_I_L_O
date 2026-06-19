@@ -161,8 +161,8 @@ check_npm_deps <dir> <name> # Проверка npm-зависимостей
 | 2 | `install_system_deps` | Node.js 22 LTS, Python 3, cmake |
 | 3 | `install_kilocode` | `npm install -g @kilocode/cli` |
 | 4 | `create_dirs` | `~/.kilo/`, `~/.config/kilo/`, `~/.ssh/` |
-| 5 | `install_dot_kilo` | Копирование `src/dot-kilo/` → `~/.kilo/` (с бэкапом) |
-| 6 | `install_dot_config_kilo` | Копирование `src/dot-config-kilo/` → `~/.config/kilo/` (с бэкапом) |
+| 5 | `install_dot_kilo` | Копирование `src/kilo-config/` → `~/.kilo/` (с бэкапом) |
+| 6 | `install_dot_config_kilo` | Копирование `src/global-config/` → `~/.config/kilo/` (с бэкапом) |
 | 7 | `install_auth` | Шаблон `auth.json` → `~/.local/share/kilo/auth.json` |
 | 8 | `install_ssh` | SSH config + публичный ключ |
 | 9 | `install_shell_config` | Дополнения в `.bashrc` + `.profile` |

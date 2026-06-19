@@ -112,10 +112,10 @@ K_I_L_O/
 │   └── verify.sh         #   Пост-установочная валидация
 │
 ├── src/                  # Исходники для установки на новую систему
-│   ├── dot-kilo/         #   → ~/.kilo/ (конфигурация агентов)
-│   ├── dot-config-kilo/  #   → ~/.config/kilo/
-│   ├── dot-local-share-kilo/ # → ~/.local/share/kilo/
-│   ├── dot-ssh/          #   → ~/.ssh/
+│   ├── kilo-config/      #   → ~/.kilo/ (проектная конфигурация)
+│   ├── global-config/    #   → ~/.config/kilo/
+│   ├── local-share/      #   → ~/.local/share/kilo/
+│   ├── ssh/              #   → ~/.ssh/
 │   ├── bashrc-append.sh  #   → ~/.bashrc
 │   └── profile-append.sh #   → ~/.profile
 │

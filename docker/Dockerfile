@@ -30,8 +30,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     python3-venv \
     nodejs \
     npm \
-    bluez \
-    bluez-tools \
     && rm -rf /var/lib/apt/lists/*
 
 # Создание пользователя для тестирования

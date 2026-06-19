@@ -48,11 +48,12 @@ version: ## Показать версию установщика
 	@./scripts/lib.sh && show_version
 
 backup: ## Создать бэкап текущих конфигов в /tmp/
-	@echo "Создание бэкапа в /tmp/kilo-backup-$$(date +%Y%m%d-%H%M%S)/"
-	@mkdir -p /tmp/kilo-backup-$$(date +%Y%m%d-%H%M%S)
-	@[ -d ~/.kilo ] && cp -r ~/.kilo /tmp/kilo-backup-$$(date +%Y%m%d-%H%M%S)/.kilo && echo "  ~/.kilo сохранён" || echo "  ~/.kilo не найден"
-	@[ -d ~/.config/kilo ] && cp -r ~/.config/kilo /tmp/kilo-backup-$$(date +%Y%m%d-%H%M%S)/.config-kilo && echo "  ~/.config/kilo сохранён" || echo "  ~/.config/kilo не найден"
-	@echo "Готово."
+	@ts=$$(date +%Y%m%d-%H%M%S); \
+	echo "Создание бэкапа в /tmp/kilo-backup-$$ts/"; \
+	mkdir -p "/tmp/kilo-backup-$$ts"; \
+	[ -d ~/.kilo ] && cp -r ~/.kilo "/tmp/kilo-backup-$$ts/.kilo" && echo "  ~/.kilo сохранён" || echo "  ~/.kilo не найден"; \
+	[ -d ~/.config/kilo ] && cp -r ~/.config/kilo "/tmp/kilo-backup-$$ts/.config-kilo" && echo "  ~/.config/kilo сохранён" || echo "  ~/.config/kilo не найден"; \
+	echo "Готово."
 
 clean: ## Очистить временные файлы установщика
 	@rm -f /tmp/kilo-install-*.log
@@ -71,6 +72,7 @@ lint-shell: ## Проверить shell-скрипты через shellcheck
 		$(SHELLCHECK) -x -Calways uninstall.sh
 		$(SHELLCHECK) -x -Calways scripts/*.sh
 		$(SHELLCHECK) -x -Calways src/bashrc-append.sh src/profile-append.sh
+		$(SHELLCHECK) -x -Calways tests/*.bats
 		@echo "  [✓] ShellCheck: 0 ошибок"
 	fi
 
@@ -80,7 +82,7 @@ lint-yaml: ## Проверить YAML-файлы через yamllint
 		echo "  [!] yamllint не установлен. Установи: pip3 install --user yamllint"
 		exit 1
 	else
-		find . -not -path './.git/*' -not -path './.kilo/node_modules/*' -not -path './.config/*' -not -path './src/dot-kilo/node_modules/*' \( -name '*.yml' -o -name '*.yaml' \) -print0 | xargs -0 -r $(YAMLLINT) -c .yamllint.yml
+		find . -not -path './.git/*' -not -path './.kilo/node_modules/*' -not -path './.config/*' -not -path './src/kilo-config/node_modules/*' \( -name '*.yml' -o -name '*.yaml' \) -print0 | xargs -0 -r $(YAMLLINT) -c .yamllint.yml
 		@echo "  [✓] yamllint: 0 ошибок"
 	fi
 
@@ -90,7 +92,7 @@ lint-markdown: ## Проверить Markdown-файлы через markdownlint
 		echo "  [!] markdownlint не установлен. Установи: npm install -g markdownlint-cli"
 		exit 1
 	else
-		markdownlint --ignore node_modules --ignore .kilo --ignore .config --ignore src/dot-kilo --ignore .git --config .markdownlint.yml '**/*.md'
+		markdownlint --ignore node_modules --ignore .kilo --ignore .config --ignore src/kilo-config --ignore .git --config .markdownlint.yml '**/*.md'
 		@echo "  [✓] markdownlint: 0 ошибок"
 	fi
 
@@ -145,7 +147,7 @@ test-bats: ## Запустить bats-тесты для bash-скриптов
 
 # ─── Docker ──────────────────────────────────────
 docker-build: ## Собрать Docker-образ для тестирования
-	docker build -t kilo-test .
+	docker build -f docker/Dockerfile -t kilo-test .
 
 docker-test: docker-build ## Запустить тесты в Docker-контейнере
 	docker run --rm kilo-test bash -c "cd /opt/kilo && bats tests/"
@@ -154,11 +156,11 @@ docker-install-test: docker-build ## Протестировать установ
 	docker run --rm kilo-test bash -c "cd /opt/kilo && make install && make verify"
 
 # ─── Синхронизация ───────────────────────────────
-sync: ## Синхронизировать src/dot-kilo/ из .kilo/
-	@echo "━━━ Синхронизация src/dot-kilo/ ← .kilo/ ━━━"
+sync: ## Синхронизировать src/kilo-config/ из .kilo/
+	@echo "━━━ Синхронизация src/kilo-config/ ← .kilo/ ━━━"
 	@errors=0
 	@for f in $$(find .kilo -not -path './.kilo/node_modules/*' -not -name 'package-lock.json' -type f | sed 's|^.kilo/||' | sort); do
-		src="src/dot-kilo/$$f"
+		src="src/kilo-config/$$f"
 		kilo=".kilo/$$f"
 		mkdir -p "$$(dirname "$$src")"
 		if [ -f "$$kilo" ]; then
@@ -175,11 +177,11 @@ sync: ## Синхронизировать src/dot-kilo/ из .kilo/
 	done
 	@echo "  Готово."
 
-sync-check: ## Проверить синхронизацию src/dot-kilo/ и .kilo/
+sync-check: ## Проверить синхронизацию src/kilo-config/ и .kilo/
 	@echo "━━━ Проверка синхронизации ━━━"
 	@errors=0
-	@for f in $$(find src/dot-kilo -not -path '*/node_modules/*' -not -name 'package-lock.json' -type f | sed 's|^src/dot-kilo/||' | sort); do
-		src="src/dot-kilo/$$f"
+	@for f in $$(find src/kilo-config -not -path '*/node_modules/*' -not -name 'package-lock.json' -type f | sed 's|^src/kilo-config/||' | sort); do
+		src="src/kilo-config/$$f"
 		kilo=".kilo/$$f"
 		if [ ! -f "$$kilo" ]; then
 			echo "  [!] Только в src: $$f"

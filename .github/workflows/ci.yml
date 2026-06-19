@@ -29,6 +29,8 @@ jobs:
           shellcheck -x -Calways scripts/*.sh
           echo "=== Проверка src/ ==="
           shellcheck -x -Calways src/bashrc-append.sh src/profile-append.sh
+          echo "=== Проверка tests/ ==="
+          shellcheck -x -Calways tests/*.bats
 
   lint-yaml:
     name: Линтинг YAML-файлов
@@ -55,7 +57,7 @@ jobs:
 
       - name: Проверка Markdown
         run: |
-          markdownlint --ignore node_modules --ignore .kilo --ignore .config --ignore src/dot-kilo --ignore .git --config .markdownlint.yml '**/*.md'
+          markdownlint --ignore node_modules --ignore .kilo --ignore .config --ignore src/kilo-config --ignore .git --config .markdownlint.yml '**/*.md'
 
   lint-actions:
     name: Линтинг GitHub Actions
@@ -109,16 +111,16 @@ jobs:
         run: bash install.sh --dry-run --skip-preflight
 
   check-manifest-sync:
-    name: Проверка синхронизации src/dot-kilo и .kilo
+    name: Проверка синхронизации src/kilo-config и .kilo
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
-      - name: Сравнение src/dot-kilo/ и .kilo/
+      - name: Сравнение src/kilo-config/ и .kilo/
         run: |
           errors=0
-          for f in $(find src/dot-kilo -not -path '*/node_modules/*' -not -name 'package-lock.json' -type f | sed 's|^src/dot-kilo/||' | sort); do
-            src="src/dot-kilo/$f"
+          for f in $(find src/kilo-config -not -path '*/node_modules/*' -not -name 'package-lock.json' -type f | sed 's|^src/kilo-config/||' | sort); do
+            src="src/kilo-config/$f"
             kilo=".kilo/$f"
             if [ ! -f "$kilo" ]; then
               echo "❌ ONLY_IN_SRC: $f"
@@ -129,7 +131,7 @@ jobs:
             fi
           done
           for f in $(find .kilo -not -path './.kilo/node_modules/*' -not -name 'package-lock.json' -type f | sed 's|^.kilo/||' | sort); do
-            if [ ! -f "src/dot-kilo/$f" ]; then
+            if [ ! -f "src/kilo-config/$f" ]; then
               echo "ℹ️ ONLY_IN_DOTKILO: $f (dev-only)"
             fi
           done

@@ -46,8 +46,8 @@
 2. Установка системных зависимостей — Node.js 22 LTS, Python 3, cmake
 3. Установка KiloCode CLI — глобально через npm (`@kilocode/cli`)
 4. Создание структуры директорий — `~/.kilo/`, `~/.config/kilo/`, `~/.ssh/`
-5. Установка проектной конфигурации Kilo — копирование `src/dot-kilo/` в `~/.kilo/`
-6. Установка глобальной конфигурации Kilo — копирование `src/dot-config-kilo/` в `~/.config/kilo/`
+5. Установка проектной конфигурации Kilo — копирование `src/kilo-config/` в `~/.kilo/`
+6. Установка глобальной конфигурации Kilo — копирование `src/global-config/` в `~/.config/kilo/`
 7. Настройка аутентификации — шаблон `auth.json`
 8. Настройка SSH — `config` + публичный ключ `id_ed25519.pub`
 9. Обновление shell-конфигурации — `.bashrc` + `.profile`
@@ -83,10 +83,10 @@ Dev-конфигурация для разработки установщика.
 
 | Директория | → Назначение |
 |------------|-------------|
-| `src/dot-kilo/` | `~/.kilo/` — проектная конфигурация Kilo |
-| `src/dot-config-kilo/` | `~/.config/kilo/` — глобальная конфигурация Kilo |
-| `src/dot-local-share-kilo/` | `~/.local/share/kilo/` — auth.json |
-| `src/dot-ssh/` | `~/.ssh/` — SSH config + публичный ключ |
+| `src/kilo-config/` | `~/.kilo/` — проектная конфигурация Kilo |
+| `src/global-config/` | `~/.config/kilo/` — глобальная конфигурация Kilo |
+| `src/local-share/` | `~/.local/share/kilo/` — auth.json |
+| `src/ssh/` | `~/.ssh/` — SSH config + публичный ключ |
 | `src/bashrc-append.sh` | `~/.bashrc` — алиасы и дополнения |
 | `src/profile-append.sh` | `~/.profile` — PATH |
 
@@ -113,8 +113,8 @@ Dev-конфигурация для разработки установщика.
     │               ├── Шаг 2:  Установка системных зависимостей
     │               ├── Шаг 3:  Установка KiloCode CLI
     │               ├── Шаг 4:  Создание директорий
-    │               ├── Шаг 5:  ~/.kilo/ ← src/dot-kilo/
-    │               ├── Шаг 6:  ~/.config/kilo/ ← src/dot-config-kilo/
+    │               ├── Шаг 5:  ~/.kilo/ ← src/kilo-config/
+    │               ├── Шаг 6:  ~/.config/kilo/ ← src/global-config/
     │               ├── Шаг 7:  auth.json
     │               ├── Шаг 8:  SSH-конфигурация
     │               ├── Шаг 9:  .bashrc + .profile

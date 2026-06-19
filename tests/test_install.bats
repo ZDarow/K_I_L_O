@@ -32,7 +32,6 @@ setup() {
     "install_auth"
     "install_ssh"
     "install_shell_config"
-    "install_ble_project"
     "install_npm_deps"
     "configure_git"
     "verify_installation"

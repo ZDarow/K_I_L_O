@@ -1,14 +1,14 @@
 #!/usr/bin/env bats
-# Тесты: проверка синхронизации src/dot-kilo/ и .kilo/
+# Тесты: проверка синхронизации src/kilo-config/ и .kilo/
 
 setup() {
   PROJECT_DIR="$(cd "$(dirname "$BATS_TEST_FILENAME")/.." && pwd)"
 }
 
-@test "src/dot-kilo/ и .kilo/ не имеют критических расхождений" {
+@test "src/kilo-config/ и .kilo/ не имеют критических расхождений" {
   errors=0
-  for f in $(find "$PROJECT_DIR/src/dot-kilo" -not -path '*/node_modules/*' -not -name 'package-lock.json' -type f | sed "s|$PROJECT_DIR/src/dot-kilo/||" | sort); do
-    src="$PROJECT_DIR/src/dot-kilo/$f"
+  for f in $(find "$PROJECT_DIR/src/kilo-config" -not -path '*/node_modules/*' -not -name 'package-lock.json' -type f | sed "s|$PROJECT_DIR/src/kilo-config/||" | sort); do
+    src="$PROJECT_DIR/src/kilo-config/$f"
     kilo="$PROJECT_DIR/.kilo/$f"
     if [ ! -f "$kilo" ]; then
       echo "ONLY_IN_SRC: $f"
@@ -23,8 +23,8 @@ setup() {
 
 @test "все агенты присутствуют в обоих наборах" {
   for agent in dev git-specialist debugger doc-scribe log-analyzer planner reviewer sys-inspector; do
-    [ -f "$PROJECT_DIR/src/dot-kilo/agent/$agent.md" ] || {
-      echo "Missing src/dot-kilo/agent/$agent.md"
+    [ -f "$PROJECT_DIR/src/kilo-config/agent/$agent.md" ] || {
+      echo "Missing src/kilo-config/agent/$agent.md"
       false
     }
     [ -f "$PROJECT_DIR/.kilo/agent/$agent.md" ] || {
@@ -36,8 +36,8 @@ setup() {
 
 @test "ключевые команды присутствуют в обоих наборах" {
   for cmd in flutter-build git-branch git-commit git-status test plan review; do
-    [ -f "$PROJECT_DIR/src/dot-kilo/commands/$cmd.md" ] || {
-      echo "Missing src/dot-kilo/commands/$cmd.md"
+    [ -f "$PROJECT_DIR/src/kilo-config/commands/$cmd.md" ] || {
+      echo "Missing src/kilo-config/commands/$cmd.md"
       false
     }
     [ -f "$PROJECT_DIR/.kilo/commands/$cmd.md" ] || {

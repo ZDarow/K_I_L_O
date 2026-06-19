@@ -36,7 +36,7 @@ echo -e "${NC}"
 echo ""
 
 if [[ "${INSTALL_DRY_RUN:-0}" != "1" ]]; then
-  echo -e "${YELLOW}ВНИМАНИЕ: Будут удалены все файлы KiloCode и BLE-проект.${NC}"
+  echo -e "${YELLOW}ВНИМАНИЕ: Будут удалены все файлы KiloCode.${NC}"
   echo -e "${YELLOW}Бэкапы изменённых файлов сохранены в: $BACKUP_DIR${NC}"
   echo ""
   read -rp "Продолжить? (yes/no): " CONFIRM
@@ -83,19 +83,6 @@ for file in "${FILES_TO_REMOVE[@]}"; do
   fi
 done
 
-header "Удаление BLE-проекта"
-
-if [[ -d "$HOME/ble-project" ]]; then
-  if dry_run "rm -rf $HOME/ble-project"; then
-    :
-  else
-    rm -rf "$HOME/ble-project"
-    log "Удалено: ~/ble-project"
-  fi
-else
-  info "Не найдено: ~/ble-project"
-fi
-
 header "Восстановление shell-конфигурации"
 
 restore_shell_file() {
@@ -108,7 +95,7 @@ restore_shell_file() {
 
   local bak
   # Ищем бэкап в директории бэкапов
-  bak="$BACKUP_DIR/$(echo "$path" | sed "s|^$HOME/||")"
+  bak="$BACKUP_DIR/${path#"$HOME"/}"
   if [[ ! -f "$bak" ]]; then
     # Если бэкапа нет — просто удаляем блок KiloCode
     if dry_run "sed -i '/# ---- KiloCode CLI/,/^# ----/d' $path"; then
