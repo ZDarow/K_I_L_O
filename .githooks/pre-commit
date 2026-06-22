@@ -1,0 +1,62 @@
+#!/bin/bash
+# pre-commit hook для K_I_L_O проекта
+# Проверяет: синтаксис Python, наличие секретов, формат YAML
+
+echo "=== Pre-commit check ==="
+
+# 1. Проверка секретов (ключи, пароли, токены)
+detect_secrets() {
+    local patterns=(
+        '-----BEGIN.*PRIVATE KEY-----'
+        'sk-[a-zA-Z0-9]{20,}'          # OpenAI ключи
+        'ghp_[a-zA-Z0-9]{36}'          # GitHub токены
+        'AKIA[0-9A-Z]{16}'             # AWS ключи
+        'password\s*=\s*['\''"][^'\''"]+['\''"]'
+        'api_key\s*=\s*['\''"][^'\''"]+['\''"]'
+        'token\s*=\s*['\''"][^'\''"]+['\''"]'
+    )
+
+    for pattern in "${patterns[@]}"; do
+        if git diff --cached -G"$pattern" --diff-filter=ACM 2>/dev/null | grep -qP -- "$pattern" 2>/dev/null; then
+            echo "⚠  ВНИМАНИЕ: Найден потенциальный секрет: $pattern"
+            echo "   Пожалуйста, проверь коммит на наличие ключей."
+            exit 1
+        fi
+    done
+}
+
+# 2. Проверка синтаксиса Python
+check_python() {
+    for f in $(git diff --cached --name-only --diff-filter=ACM | grep '\.py$'); do
+        if [ -f "$f" ]; then
+            python3 -m py_compile "$f" 2>/dev/null
+            if [ $? -ne 0 ]; then
+                echo "✗ Синтаксическая ошибка в $f"
+                exit 1
+            fi
+        fi
+    done
+}
+
+# 3. Проверка YAML
+check_yaml() {
+    if command -v python3 &>/dev/null; then
+        for f in $(git diff --cached --name-only --diff-filter=ACM | grep -E '\.(yaml|yml)$'); do
+            if [ -f "$f" ]; then
+                python3 -c "import yaml; yaml.safe_load(open('$f'))" 2>/dev/null
+                if [ $? -ne 0 ]; then
+                    echo "✗ Некорректный YAML в $f"
+                    exit 1
+                fi
+            fi
+        done
+    fi
+}
+
+# Запуск проверок
+detect_secrets
+check_python
+check_yaml
+
+echo "✓ Pre-commit проверка пройдена"
+exit 0
