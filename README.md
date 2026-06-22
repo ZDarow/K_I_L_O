@@ -159,7 +159,7 @@ nano ~/.local/share/kilo/auth.json
 
 ```json
 {
-  "opencode": {
+  "kilo": {
     "type": "api",
     "key": "sk-..."
   }

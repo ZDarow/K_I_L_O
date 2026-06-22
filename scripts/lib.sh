@@ -107,6 +107,16 @@ run_sudo() {
   if dry_run "[SKIP] $desc: sudo $*"; then
     return 0
   fi
+
+  # Блокировка опасных команд
+  local cmd_str="$*"
+  for pattern in "rm -rf /*" "rm -rf /" "dd if=" "mkfs\." "mkfs " "poweroff" "reboot" "shutdown -h" "shutdown -r"; do
+    if [[ "$cmd_str" == *"$pattern"* ]]; then
+      error "БЛОКИРОВАНО: sudo $cmd_str (опасная команда: $pattern)"
+      return 1
+    fi
+  done
+
   log_to_file "RUN: sudo $*"
   sudo "$@" 2>&1 | tee -a "$LOG_FILE" || {
     error "Ошибка: $desc"

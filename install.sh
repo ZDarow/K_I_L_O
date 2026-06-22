@@ -274,7 +274,7 @@ install_system_deps() {
     run_sudo "Node.js" apt-get install -y nodejs
   fi
   log "Node.js $(node --version)"
-  run_sudo "packages" apt-get install -y -qq python3 python3-pip git curl wget build-essential || true
+  run_sudo "packages" apt-get install -y -qq python3 python3-pip git curl wget build-essential
   [[ $INSTALL_DRY_RUN = 0 ]] && manifest_set_config "packages" "nodejs python3 git"
 }
 
@@ -285,7 +285,7 @@ install_kilocode() {
   }
   dry_run "npx --yes kilo --version" && return 0
   npx --yes kilo --version &>/dev/null 2>&1 && log "KiloCode уже доступен" || {
-    npm install -g @kilocode/cli 2>&1 | tail -3 | tee -a "$LOG_FILE" || true
+    npm install -g @kilocode/cli 2>&1 | tail -3 | tee -a "$LOG_FILE"
   }
 }
 

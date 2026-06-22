@@ -1,7 +1,7 @@
 {
   "$schema": "https://app.kilo.ai/config.json",
   "username": "Разработчик",
-  "default_agent": "russian-dev",
+  "default_agent": "dev",
   "instructions": [
     "AGENTS.md",
     "instructions/*.md",
@@ -24,19 +24,7 @@
     "webfetch": "allow",
     "skill": "allow",
     "task": {
-      "*": "allow",
-      "ble-engineer": "allow",
-      "gatt-recovery": "allow",
-      "russian-dev": "allow",
-      "reviewer": "allow",
-      "planner": "allow",
-      "debugger": "allow",
-      "doc-scribe": "allow",
-      "sys-inspector": "allow",
-      "log-analyzer": "allow",
-      "adb-specialist": "allow",
-      "esp32-arduino-specialist": "allow",
-      "apk-reverse-engineer": "allow"
+      "*": "allow"
     },
     "bash": {
       "*": "allow",
@@ -48,7 +36,14 @@
       "hciconfig *": "allow",
       "bluetoothctl *": "allow",
       "sudo apt*": "ask",
-      "sudo *": "allow",
+      "sudo rm *": "deny",
+      "sudo rm -rf /*": "deny",
+      "sudo dd *": "deny",
+      "sudo mkfs*": "deny",
+      "sudo poweroff": "deny",
+      "sudo reboot": "deny",
+      "sudo shutdown": "deny",
+      "sudo kill -9 *": "deny",
       "tail *": "allow",
       "pip3 *": "allow",
       "python3 *": "allow",
@@ -63,5 +58,5 @@
       "/etc/*": "allow",
       "/tmp/*": "allow"
     }
-  },
+  }
 }
