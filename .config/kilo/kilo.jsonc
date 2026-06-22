@@ -1,10 +1,11 @@
 {
   "$schema": "https://app.kilo.ai/config.json",
-  "username": "Universal Dev",
+  "username": "Разработчик",
   "default_agent": "dev",
   "instructions": [
     "AGENTS.md",
-    ".config/kilo/instructions/*.md"
+    "instructions/*.md",
+    "~/.config/kilo/AGENTS.md"
   ],
   "auto_collapse_reasoning": true,
   "compaction": {
@@ -18,16 +19,22 @@
     "glob": "allow",
     "grep": "allow",
     "edit": "allow",
-    "write": "allow",
     "question": "allow",
     "todowrite": "allow",
     "webfetch": "allow",
-    "websearch": "allow",
     "skill": "allow",
     "task": {
       "*": "allow"
     },
     "bash": {
+      "*": "allow",
+      "echo *": "allow",
+      "uname *": "allow",
+      "cat *": "allow",
+      "head *": "allow",
+      "which *": "allow",
+      "hciconfig *": "allow",
+      "bluetoothctl *": "allow",
       "sudo apt*": "ask",
       "sudo rm *": "deny",
       "sudo rm -rf /*": "deny",
@@ -37,10 +44,19 @@
       "sudo reboot": "deny",
       "sudo shutdown": "deny",
       "sudo kill -9 *": "deny",
-      "*": "allow"
+      "tail *": "allow",
+      "pip3 *": "allow",
+      "python3 *": "allow",
+      "systemctl status *": "allow",
+      "lsusb *": "allow",
+      "grep *": "allow",
+      "curl *": "allow",
+      "source *": "allow",
+      "pip install *": "allow"
     },
     "external_directory": {
-      "*": "allow"
+      "/etc/*": "allow",
+      "/tmp/*": "allow"
     }
   }
 }

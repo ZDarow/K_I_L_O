@@ -57,7 +57,7 @@ git diff --staged
 ### ❌ Patterns Blocked
 ```javascript
 // API Keys
-const API_KEY = "sk-1234567890abcdef";
+const API_KEY = process.env.API_KEY || "<YOUR_API_KEY>";
 
 // Database URLs
 const DB_URL = "postgres://user:pass@host/db";
