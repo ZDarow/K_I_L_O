@@ -96,7 +96,7 @@ nano ~/.local/share/kilo/auth.json
 
 ```json
 {
-  "opencode": {
+  "kilo": {
     "type": "api",
     "key": "sk-ваш_ключ_от_provider"
   }

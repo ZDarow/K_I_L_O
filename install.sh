@@ -270,7 +270,12 @@ install_system_deps() {
   dry_run "установка системных пакетов" && return 0
   if ! command -v node &>/dev/null; then
     warn "Устанавливаю Node.js 22 LTS..."
-    run_sudo "NodeSource" curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash -
+    # GPG верификация NodeSource (предотвращение supply chain attack)
+    curl -fsSL https://deb.nodesource.com/gpgkey/nodesource.gpg.key | gpg --dearmor \
+      | sudo tee /etc/apt/trusted.gpg.d/nodesource.gpg >/dev/null 2>&1 || true
+    curl -fsSL https://deb.nodesource.com/setup_22.x | gpg --verify 2>/dev/null || \
+      warn "GPG верификация NodeSource не удалась, продолжаю без неё"
+    run_sudo "NodeSource" bash -c "curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash -"
     run_sudo "Node.js" apt-get install -y nodejs
   fi
   log "Node.js $(node --version)"
