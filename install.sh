@@ -160,10 +160,11 @@ verify_installation() {
   fi
 
   subheader "SSH"
-  [[ -f "$HOME/.ssh/id_ed25519" ]] && log "  Ключ есть" || {
-    warn "  Ключа нет"
-    WARNINGS=$((WARNINGS + 1))
-  }
+  if [[ -f "$HOME/.ssh/id_ed25519" ]]; then
+    log "  Ключ есть"
+  else
+    info "  Ключа нет (опционально)"
+  fi
 
   subheader "Manifest"
   if [[ -f "$HOME/.local/share/kilo/manifest.json" ]]; then
