@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>K_I_L_O</title>
+<style>
+  :root {
+    --bg: #0d1117;
+    --bg2: #161b22;
+    --bg3: #21262d;
+    --border: #30363d;
+    --text: #e6edf3;
+    --muted: #8b949e;
+    --accent: #58a6ff;
+    --green: #3fb950;
+    --red: #f85149;
+    --yellow: #d29922;
+    --radius: 6px;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    background: var(--bg); color: var(--text); font-size: 14px; line-height: 1.5;
+    display: flex; flex-direction: column; min-height: 100vh;
+  }
+
+  /* Header */
+  header {
+    background: var(--bg2); border-bottom: 1px solid var(--border);
+    padding: 12px 24px; display: flex; align-items: center; gap: 16px;
+  }
+  header h1 { font-size: 18px; font-weight: 600; }
+  header .tag {
+    font-size: 12px; background: var(--bg3); color: var(--accent);
+    padding: 2px 8px; border-radius: 12px; border: 1px solid var(--border);
+  }
+  header .version { font-size: 12px; color: var(--muted); }
+  header .badge {
+    margin-left: auto; font-size: 11px; padding: 3px 10px; border-radius: 12px;
+    border: 1px solid var(--border);
+  }
+  .badge.clean { color: var(--green); border-color: var(--green); }
+  .badge.dirty { color: var(--yellow); border-color: var(--yellow); }
+
+  /* Layout */
+  .layout { display: grid; grid-template-columns: 320px 1fr; gap: 0; flex: 1; }
+
+  /* Sidebar */
+  aside {
+    background: var(--bg2); border-right: 1px solid var(--border);
+    padding: 16px; overflow-y: auto;
+  }
+  aside section { margin-bottom: 20px; }
+  aside h2 {
+    font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px;
+    color: var(--muted); margin-bottom: 8px;
+  }
+  .stat-row { display: flex; justify-content: space-between; padding: 4px 0; font-size: 13px; }
+  .stat-row .label { color: var(--muted); }
+  .stat-row .value { color: var(--text); font-family: "SF Mono", "Cascadia Code", monospace; font-size: 12px; }
+
+  .commit-list { list-style: none; }
+  .commit-list li {
+    padding: 4px 0; font-family: "SF Mono", "Cascadia Code", monospace; font-size: 11px;
+    border-bottom: 1px solid var(--border); color: var(--muted);
+  }
+  .commit-list li:last-child { border-bottom: none; }
+  .commit-list li .hash { color: var(--accent); }
+
+  .file-list { list-style: none; }
+  .file-list li {
+    padding: 2px 0; font-family: "SF Mono", "Cascadia Code", monospace; font-size: 11px;
+    color: var(--yellow);
+  }
+
+  /* Main */
+  main { padding: 16px; overflow-y: auto; display: flex; flex-direction: column; }
+  main h2 {
+    font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px;
+    color: var(--muted); margin-bottom: 10px;
+  }
+
+  /* Targets grid */
+  .targets {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 6px; margin-bottom: 16px;
+  }
+  .target-btn {
+    background: var(--bg3); border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 8px 12px; color: var(--text); cursor: pointer; text-align: left;
+    font-size: 12px; line-height: 1.4; transition: all 0.15s;
+  }
+  .target-btn:hover { border-color: var(--accent); background: #1c2a3a; }
+  .target-btn:active { transform: scale(0.98); }
+  .target-btn .tname { font-family: "SF Mono", "Cascadia Code", monospace; font-weight: 600; color: var(--accent); }
+  .target-btn .tdesc { display: block; color: var(--muted); font-size: 11px; margin-top: 2px; }
+  .target-btn.running { pointer-events: none; opacity: 0.6; border-color: var(--yellow); }
+  .target-btn.running .tname::after {
+    content: ""; display: inline-block; width: 10px; height: 10px;
+    margin-left: 6px; border: 2px solid var(--yellow); border-top-color: transparent;
+    border-radius: 50%; animation: spin 0.8s linear infinite; vertical-align: middle;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* Console */
+  .console-wrap { flex: 1; display: flex; flex-direction: column; min-height: 150px; }
+  .console {
+    flex: 1; background: #000; color: #c9d1d9; font-family: "SF Mono", "Cascadia Code", monospace;
+    font-size: 12px; padding: 12px; border-radius: var(--radius);
+    border: 1px solid var(--border); overflow-y: auto; white-space: pre-wrap;
+    word-break: break-all; min-height: 120px; max-height: 400px;
+  }
+  .console .prompt { color: var(--green); }
+  .console .stderr { color: var(--red); }
+  .console .info { color: var(--muted); font-style: italic; }
+  .console-wrap .bar {
+    display: flex; align-items: center; gap: 8px; margin-bottom: 6px;
+  }
+  .console-wrap .bar .clear-btn {
+    background: none; border: 1px solid var(--border); color: var(--muted);
+    padding: 2px 8px; border-radius: 4px; cursor: pointer; font-size: 11px;
+    margin-left: auto;
+  }
+  .console-wrap .bar .clear-btn:hover { color: var(--text); border-color: var(--muted); }
+
+  /* Spinner overlay for loading states */
+  .loading {
+    text-align: center; padding: 40px; color: var(--muted);
+  }
+  .loading::after {
+    content: ""; display: inline-block; width: 24px; height: 24px;
+    border: 3px solid var(--border); border-top-color: var(--accent);
+    border-radius: 50%; animation: spin 0.8s linear infinite; margin-top: 8px;
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .layout { grid-template-columns: 1fr; }
+    aside { border-right: none; border-bottom: 1px solid var(--border); max-height: 300px; }
+    .targets { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>K_I_L_O</h1>
+  <span class="tag" id="branch-tag">—</span>
+  <span class="version" id="version-display">—</span>
+  <span class="badge" id="status-badge">загрузка…</span>
+</header>
+
+<div class="layout">
+  <!-- Sidebar -->
+  <aside id="sidebar">
+    <section>
+      <h2>Проект</h2>
+      <div class="stat-row"><span class="label">Последний тег</span><span class="value" id="info-tag">—</span></div>
+      <div class="stat-row"><span class="label">Последний коммит</span><span class="value" id="info-commit">—</span></div>
+      <div class="stat-row"><span class="label">Ветка</span><span class="value" id="info-branch">—</span></div>
+    </section>
+
+    <section>
+      <h2>Последние коммиты</h2>
+      <ul class="commit-list" id="commit-list"><li class="info">загрузка…</li></ul>
+    </section>
+
+    <section id="changes-section" style="display:none">
+      <h2>Незакоммиченные изменения</h2>
+      <ul class="file-list" id="changes-list"></ul>
+    </section>
+  </aside>
+
+  <!-- Main -->
+  <main>
+    <h2>Команды</h2>
+    <div class="targets" id="targets-grid"><div class="loading">загрузка целей…</div></div>
+
+    <div class="console-wrap">
+      <div class="bar">
+        <span style="font-size:11px;color:var(--muted)">Вывод</span>
+        <button class="clear-btn" onclick="clearConsole()">очистить</button>
+      </div>
+      <div class="console" id="console"><span class="info">← Запусти команду из списка выше</span></div>
+    </div>
+  </main>
+</div>
+
+<script>
+// ─── Консоль ─────────────────────────────────────
+const consoleEl = document.getElementById('console');
+
+function log(text, cls = '') {
+  const line = document.createElement('div');
+  line.textContent = text;
+  if (cls) line.className = cls;
+  consoleEl.appendChild(line);
+  consoleEl.scrollTop = consoleEl.scrollHeight;
+}
+
+function clearConsole() {
+  consoleEl.innerHTML = '';
+  consoleEl.innerHTML = '<span class="info">← Консоль очищена</span>';
+}
+
+// ─── API запросы ────────────────────────────────
+async function api(url, options = {}) {
+  const res = await fetch(url, options);
+  return res.json();
+}
+
+// ─── Загрузка статуса ──────────────────────────
+async function loadStatus() {
+  try {
+    const status = await api('/api/status');
+    document.getElementById('branch-tag').textContent = status.branch;
+    document.getElementById('info-branch').textContent = status.branch;
+    document.getElementById('info-tag').textContent = status.tag;
+    document.getElementById('info-commit').textContent = status.commit;
+
+    const badge = document.getElementById('status-badge');
+    if (status.uncommitted || status.staged.length > 0) {
+      badge.textContent = 'есть изменения';
+      badge.className = 'badge dirty';
+    } else {
+      badge.textContent = 'чисто';
+      badge.className = 'badge clean';
+    }
+
+    // Незакоммиченные файлы
+    const files = [
+      ...status.staged.filter(Boolean),
+      ...status.unstaged.filter(Boolean),
+      ...status.untracked.map(f => '? ' + f)
+    ];
+    const section = document.getElementById('changes-section');
+    const list = document.getElementById('changes-list');
+    if (files.length > 0) {
+      section.style.display = '';
+      list.innerHTML = files.map(f => `<li>${escapeHtml(f)}</li>`).join('');
+    } else {
+      section.style.display = 'none';
+    }
+
+    // Коммиты
+    const cl = document.getElementById('commit-list');
+    if (status.recent_commits.length > 0) {
+      cl.innerHTML = status.recent_commits.map(c => {
+        const m = c.match(/^([a-f0-9]+)\s(.+)$/);
+        return m ? `<li><span class="hash">${m[1]}</span> ${escapeHtml(m[2])}</li>`
+                 : `<li>${escapeHtml(c)}</li>`;
+      }).join('');
+    } else {
+      cl.innerHTML = '<li class="info">нет коммитов</li>';
+    }
+  } catch (e) {
+    document.getElementById('branch-tag').textContent = 'ошибка';
+    document.getElementById('status-badge').textContent = 'ошибка соединения';
+    log('Ошибка загрузки статуса: ' + e.message, 'stderr');
+  }
+}
+
+// ─── Загрузка целей ────────────────────────────
+async function loadTargets() {
+  try {
+    const targets = await api('/api/targets');
+    const grid = document.getElementById('targets-grid');
+    if (targets.length === 0) {
+      grid.innerHTML = '<div style="color:var(--muted);padding:8px;">Нет целей</div>';
+      return;
+    }
+    grid.innerHTML = targets.map(t =>
+      `<button class="target-btn" data-target="${t.name}" onclick="runTarget('${t.name}')">
+        <span class="tname">${t.name}</span>
+        ${t.desc ? `<span class="tdesc">${escapeHtml(t.desc)}</span>` : ''}
+      </button>`
+    ).join('');
+  } catch (e) {
+    document.getElementById('targets-grid').innerHTML =
+      '<div style="color:var(--red);padding:8px;">Ошибка загрузки целей</div>';
+  }
+}
+
+// ─── Загрузка версии ───────────────────────────
+async function loadVersion() {
+  try {
+    const v = await api('/api/version');
+    document.getElementById('version-display').textContent = v.version;
+  } catch (_) {}
+}
+
+// ─── Запуск цели ───────────────────────────────
+async function runTarget(name) {
+  const btn = document.querySelector(`.target-btn[data-target="${name}"]`);
+  if (!btn || btn.classList.contains('running')) return;
+
+  btn.classList.add('running');
+  log(`$ make ${name}`, 'prompt');
+  consoleEl.innerHTML += '\n';
+
+  try {
+    const result = await api(`/api/run/${name}`, { method: 'POST' });
+    if (result.stdout) log(result.stdout.replace(/\n$/, ''));
+    if (result.stderr) log(result.stderr.replace(/\n$/, ''), 'stderr');
+    if (result.rc === 0) {
+      log(`→ завершено (rc=${result.rc})`, 'prompt');
+    } else {
+      log(`→ ОШИБКА (rc=${result.rc})`, 'stderr');
+    }
+  } catch (e) {
+    log(`Ошибка запроса: ${e.message}`, 'stderr');
+  } finally {
+    btn.classList.remove('running');
+    // Обновить статус после команды
+    loadStatus();
+  }
+}
+
+// ─── Утилиты ───────────────────────────────────
+function escapeHtml(s) {
+  const d = document.createElement('div');
+  d.textContent = s;
+  return d.innerHTML;
+}
+
+// ─── Инициализация ─────────────────────────────
+loadVersion();
+loadStatus();
+loadTargets();
+
+// Автообновление статуса каждые 30 секунд
+setInterval(loadStatus, 30000);
+</script>
+</body>
+</html>

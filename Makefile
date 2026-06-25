@@ -18,7 +18,7 @@ MARKDOWNLINT := $(shell command -v markdownlint 2>/dev/null || echo "")
 GIT_TAG := $(shell git describe --tags --abbrev=0 2>/dev/null || true)
 
 # ─── Цели ────────────────────────────────────────
-.PHONY: help install check verify dry-run uninstall version backup clean lint lint-shell lint-yaml lint-markdown lint-actions lint-shfmt lint-precommit test test-bats sync sync-global sync-check docker-build docker-test git-hooks uv-sync uv-update uv-list
+.PHONY: help install check verify dry-run uninstall version backup clean lint lint-shell lint-yaml lint-markdown lint-actions lint-shfmt lint-precommit test test-bats sync sync-global sync-check docker-build docker-test git-hooks uv-sync uv-update uv-list gui-start gui-open
 
 help: ## Показать справку
 	@echo "KiloCode CLI Installer"
@@ -240,6 +240,16 @@ uv-update: ## Обновить Python-зависимости (uv lock + sync)
 uv-list: ## Показать установленные Python-пакеты
 	@echo "━━━ uv list ━━━"
 	@$(UV) pip list 2>/dev/null || $(UV) run pip list 2>/dev/null || echo "  [i] Нет Python-пакетов в проекте"
+
+# ─── GUI ─────────────────────────────────────────
+gui-start: ## Запустить веб-интерфейс (http://localhost:8088)
+	@echo "━━━ K_I_L_O GUI ━━━"
+	@python3 gui/server.py
+
+gui-open: ## Открыть GUI в браузере
+	@python3 -c "import webbrowser; webbrowser.open('http://localhost:8088')" 2>/dev/null || \
+		xdg-open http://localhost:8080 2>/dev/null || \
+		echo "  Открой http://localhost:8088 в браузере"
 
 # ─── Git hooks ────────────────────────────────────
 git-hooks: ## Установить pre-commit хуки (.githooks/pre-commit)
