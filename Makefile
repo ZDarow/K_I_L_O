@@ -18,7 +18,7 @@ MARKDOWNLINT := $(shell command -v markdownlint 2>/dev/null || echo "")
 GIT_TAG := $(shell git describe --tags --abbrev=0 2>/dev/null || true)
 
 # ─── Цели ────────────────────────────────────────
-.PHONY: help install check verify dry-run uninstall version backup clean lint lint-shell lint-yaml lint-markdown lint-actions lint-shfmt lint-precommit test test-bats sync sync-global sync-check docker-build docker-test git-hooks uv-sync uv-update uv-list gui-start gui-open
+.PHONY: help install check verify dry-run uninstall version backup clean lint lint-shell lint-yaml lint-markdown lint-jsonc lint-actions lint-shfmt lint-precommit test test-bats sync sync-global sync-check docker-build docker-test git-hooks uv-sync uv-update uv-list gui-start gui-open
 
 help: ## Показать справку
 	@echo "KiloCode CLI Installer"
@@ -64,7 +64,7 @@ clean: ## Очистить временные файлы установщика
 	@echo "Логи установки очищены."
 
 # ─── Линтинг ─────────────────────────────────────
-lint: lint-shell lint-yaml lint-markdown lint-actions lint-shfmt ## Запустить все линтеры
+lint: lint-shell lint-yaml lint-markdown lint-jsonc lint-actions lint-shfmt ## Запустить все линтеры
 
 lint-shell: ## Проверить shell-скрипты через shellcheck
 	@echo "━━━ ShellCheck ━━━"
@@ -72,7 +72,7 @@ lint-shell: ## Проверить shell-скрипты через shellcheck
 		echo "  [!] shellcheck не установлен. Установи: sudo apt-get install -y shellcheck"
 		exit 1
 	else
-		$(SHELLCHECK) -x -Calways install.sh src/bashrc-append.sh src/profile-append.sh $(BLE_SCRIPTS) tests/*.bats
+		$(SHELLCHECK) -x -Calways --severity=style install.sh src/bashrc-append.sh src/profile-append.sh $(BLE_SCRIPTS) tests/*.bats
 		@echo "  [✓] ShellCheck: 0 ошибок"
 	fi
 
@@ -94,6 +94,27 @@ lint-markdown: ## Проверить Markdown-файлы через markdownlint
 	else
 		markdownlint --ignore node_modules --ignore .kilo --ignore .config --ignore src/kilo-config --ignore .git --config .markdownlint.yml '**/*.md'
 		@echo "  [✓] markdownlint: 0 ошибок"
+	fi
+
+lint-jsonc: ## Проверить JSONC-файлы через json5
+	@echo "━━━ JSONC lint ━━━"
+	@if ! command -v json5 &>/dev/null; then
+		echo "  [!] json5 не установлен. Установи: npm install -g json5"
+		exit 1
+	else
+		errors=0
+		find . -name '*.jsonc' -not -path './node_modules/*' -not -path './.kilo/node_modules/*' -not -path './.git/*' -print0 | while IFS= read -r -d '' f; do
+			if ! json5 "$$f" > /dev/null 2>&1; then
+				echo "  [✗] $$f"
+				errors=$$((errors + 1))
+			fi
+		done
+		if [ "$$errors" -eq 0 ]; then
+			echo "  [✓] json5: все файлы валидны"
+		else
+			echo "  [✗] Найдено $$errors ошибок"
+			exit 1
+		fi
 	fi
 
 lint-actions: ## Проверить GitHub Actions workflow через actionlint

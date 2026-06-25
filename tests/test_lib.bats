@@ -1,5 +1,6 @@
 #!/usr/bin/env bats
 # Тесты для scripts/lib.sh
+# shellcheck disable=SC2030,SC2031  # BATS запускает тесты в сабшеллах
 
 setup() {
   load '../scripts/lib.sh'
@@ -81,14 +82,14 @@ teardown() {
 # ═══════════════════════════════════════════════════
 
 @test "dry_run: возвращает 0 при INSTALL_DRY_RUN=1" {
-  INSTALL_DRY_RUN=1
+  export INSTALL_DRY_RUN=1
   run dry_run "тест"
   [ "$status" -eq 0 ]
   [[ "$output" == *"[DRY-RUN]"* ]]
 }
 
 @test "dry_run: возвращает 1 при INSTALL_DRY_RUN=0" {
-  INSTALL_DRY_RUN=0
+  export INSTALL_DRY_RUN=0
   run dry_run "тест"
   [ "$status" -eq 1 ]
 }
@@ -121,7 +122,7 @@ teardown() {
 @test "manifest_init: создаёт manifest.json" {
   MANIFEST_DIR="$TEST_DIR/manifest"
   MANIFEST_FILE="$MANIFEST_DIR/manifest.json"
-  INSTALL_DRY_RUN=0
+  export INSTALL_DRY_RUN=0
   run manifest_init
   [ "$status" -eq 0 ]
   [ -f "$MANIFEST_FILE" ]
@@ -130,7 +131,7 @@ teardown() {
 @test "manifest_init: содержит правильную структуру" {
   MANIFEST_DIR="$TEST_DIR/manifest2"
   MANIFEST_FILE="$MANIFEST_DIR/manifest.json"
-  INSTALL_DRY_RUN=0
+  export INSTALL_DRY_RUN=0
   manifest_init
   run python3 -c "import json; m=json.load(open('$MANIFEST_FILE')); print(m['version'])"
   [ "$status" -eq 0 ]
@@ -140,7 +141,7 @@ teardown() {
 @test "manifest_add_file: добавляет файл в manifest" {
   MANIFEST_DIR="$TEST_DIR/manifest3"
   MANIFEST_FILE="$MANIFEST_DIR/manifest.json"
-  INSTALL_DRY_RUN=0
+  export INSTALL_DRY_RUN=0
   manifest_init
   echo "test" >"$TEST_DIR/test_manifest.txt"
   manifest_add_file "$TEST_DIR/test_manifest.txt"
@@ -152,7 +153,7 @@ teardown() {
 @test "manifest_set_config: устанавливает конфигурацию" {
   MANIFEST_DIR="$TEST_DIR/manifest4"
   MANIFEST_FILE="$MANIFEST_DIR/manifest.json"
-  INSTALL_DRY_RUN=0
+  export INSTALL_DRY_RUN=0
   manifest_init
   manifest_set_config "test_key" "test_value"
   run python3 -c "import json; m=json.load(open('$MANIFEST_FILE')); print(m['configs']['test_key'])"
