@@ -16,7 +16,7 @@ NC='\033[0m'
 BOLD='\033[1m'
 
 # ---- Конфигурация ----
-KILO_VERSION="1.2.0"
+KILO_VERSION="${KILO_VERSION:-1.2.0}"
 MANIFEST_DIR="$HOME/.local/share/kilo"
 MANIFEST_FILE="$MANIFEST_DIR/manifest.json"
 BACKUP_DIR="/tmp/kilo-backup-$(date +%Y%m%d-%H%M%S)"
@@ -204,5 +204,11 @@ trap_install() {
 
 # ---- Справка ----
 show_version() {
-  echo "KiloCode CLI Installer v$KILO_VERSION"
+  local ver="$KILO_VERSION"
+  local tag
+  tag=$(git describe --tags --abbrev=0 2>/dev/null || true)
+  if [ -n "$tag" ]; then
+    ver="${tag#v}"
+  fi
+  echo "KiloCode CLI Installer v$ver"
 }

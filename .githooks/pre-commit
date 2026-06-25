@@ -1,0 +1,93 @@
+#!/usr/bin/env bash
+# ============================================
+# Pre-commit hook — проверка перед коммитом
+# ============================================
+set -euo pipefail
+
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+NC='\033[0m'
+
+errors=0
+
+# ─── 1. Проверка секретов ──────────────────
+echo "━━━ Pre-commit: проверка секретов ━━━"
+STAGED=$(git diff --cached --name-only)
+for f in $STAGED; do
+  if [ -f "$f" ]; then
+    # Поиск placeholder API-ключей
+    if grep -Pn 'sk-[a-zA-Z0-9]{20,}' "$f" 2>/dev/null | grep -v "<YOUR_API_KEY>" | grep -v "process.env"; then
+      echo -e "${RED}  [✗] $f: возможный API-ключ${NC}"
+      errors=$((errors + 1))
+    fi
+  fi
+done
+
+# ─── 2. Проверка shell-скриптов ────────────
+echo "━━━ Pre-commit: shellcheck ━━━"
+for f in $STAGED; do
+  case "$f" in
+    *.sh|*.bats)
+      if command -v shellcheck &>/dev/null; then
+        if ! shellcheck -x -Calways "$f" 2>/dev/null; then
+          echo -e "${RED}  [✗] $f: shellcheck ошибки${NC}"
+          errors=$((errors + 1))
+        else
+          echo -e "${GREEN}  [✓] $f${NC}"
+        fi
+      fi
+      ;;
+  esac
+done
+
+# ─── 3. Проверка синтаксиса Python ─────────
+echo "━━━ Pre-commit: Python ━━━"
+for f in $STAGED; do
+  case "$f" in
+    *.py)
+      if command -v python3 &>/dev/null; then
+        if ! python3 -m py_compile "$f" 2>/dev/null; then
+          echo -e "${RED}  [✗] $f: синтаксическая ошибка${NC}"
+          errors=$((errors + 1))
+        else
+          echo -e "${GREEN}  [✓] $f${NC}"
+        fi
+      fi
+      ;;
+  esac
+done
+
+# ─── 4. Проверка YAML ──────────────────────
+echo "━━━ Pre-commit: YAML ━━━"
+for f in $STAGED; do
+  case "$f" in
+    *.yml|*.yaml)
+      if command -v python3 &>/dev/null; then
+        if ! python3 -c "import yaml; yaml.safe_load(open('$f'))" 2>/dev/null; then
+          # yaml может не быть установлен, пробуем альтернативу
+          if command -v yamllint &>/dev/null; then
+            if ! yamllint -c .yamllint.yml "$f" 2>/dev/null; then
+              echo -e "${RED}  [✗] $f: YAML ошибки${NC}"
+              errors=$((errors + 1))
+            else
+              echo -e "${GREEN}  [✓] $f${NC}"
+            fi
+          fi
+        else
+          echo -e "${GREEN}  [✓] $f${NC}"
+        fi
+      fi
+      ;;
+  esac
+done
+
+# ─── Итог ──────────────────────────────────
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+if [ "$errors" -gt 0 ]; then
+  echo -e "${RED}Pre-commit: $errors ошибок. Коммит отменён.${NC}"
+  echo -e "${YELLOW}Используй --no-verify для пропуска хука${NC}"
+  exit 1
+fi
+echo -e "${GREEN}Pre-commit: всё чисто${NC}"
+exit 0

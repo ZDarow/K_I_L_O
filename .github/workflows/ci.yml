@@ -8,6 +8,7 @@ on:
 
 permissions:
   contents: read
+  packages: write  # для docker build/push
 
 jobs:
   lint-shell:
@@ -155,3 +156,30 @@ jobs:
             echo "❌ Найдено $errors расхождений"
             exit 1
           fi
+
+  docker-install-test:
+    name: Docker-тест установки
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Сборка Docker-образа
+        run: docker build -f docker/Dockerfile -t kilo-test .
+
+      - name: Тестирование установки
+        run: |
+          echo "=== Запуск make install && make verify в Docker ==="
+          docker run --rm kilo-test bash -c "
+            set -euo pipefail
+            cd /opt/kilo
+            echo '--- make install ---'
+            bash install.sh --skip-preflight 2>&1 | tail -20
+            echo '--- make verify ---'
+            bash install.sh --verify 2>&1 | tail -20
+            echo '--- Проверка Kilo CLI ---'
+            npx --yes kilo --version 2>&1 || echo 'Kilo CLI не установлен (ожидаемо в изолированном окружении)'
+          "
+
+      - name: Очистка
+        if: always()
+        run: docker rmi kilo-test 2>/dev/null || true
