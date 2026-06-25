@@ -79,6 +79,8 @@
 `.kilo/tools/disk-usage.ts`:
 ```typescript
 import { tool } from "@kilocode/plugin";
+import { execSync } from "node:child_process";
+
 export default tool({
   description: "Показать использование диска",
   args: {
@@ -86,8 +88,7 @@ export default tool({
   },
   async execute(args) {
     const target = args.path || ".";
-    const result = await Bun.$`du -sh ${target}`.text();
-    return result.trim();
+    return execSync(`du -sh ${target}`, { encoding: "utf-8" }).trim();
   },
 });
 ```
@@ -95,13 +96,15 @@ export default tool({
 `.kilo/tools/system-info.ts`:
 ```typescript
 import { tool } from "@kilocode/plugin";
+import { execSync } from "node:child_process";
+
 export default tool({
   description: "Информация о системе (ОС, RAM, CPU, диски)",
   args: {},
   async execute() {
-    const os = await Bun.$`uname -a`.text();
-    const mem = await Bun.$`free -h`.text();
-    const disk = await Bun.$`df -h /`.text();
+    const os = execSync("uname -a", { encoding: "utf-8" });
+    const mem = execSync("free -h", { encoding: "utf-8" });
+    const disk = execSync("df -h /", { encoding: "utf-8" });
     return `OS: ${os.trim()}\nRAM:\n${mem.trim()}\nDisk:\n${disk.trim()}`;
   },
 });

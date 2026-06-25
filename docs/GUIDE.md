@@ -71,7 +71,7 @@ make verify
   → Конфигурация Kilo
   [✓] /home/user/.kilo/kilo.jsonc
   [✓] /home/user/.kilo/package.json
-  [✓] /home/user/.kilo/agents (14 файлов)
+  [✓] /home/user/.kilo/agent (14 файлов)
   ...
 
   → Node.js экосистема
@@ -304,7 +304,7 @@ flutter build web              # Web
 
 ```text
 ls ~/.kilo/               # Все файлы
-ls ~/.kilo/agents/        # Агенты
+ls ~/.kilo/agent/        # Агенты
 ls ~/.kilo/commands/      # Команды
 ls ~/.kilo/tools/         # Инструменты
 ls ~/.kilo/skills/        # Навыки
@@ -320,7 +320,7 @@ cat ~/.config/kilo/AGENTS.md   # Правила высшего приорите�
 
 ### 7.3. Добавление своего агента
 
-Создайте файл `~/.kilo/agents/my-agent.md`:
+Создайте файл `~/.kilo/agent/my-agent.md`:
 
 ```yaml
 ---
@@ -447,7 +447,7 @@ make uninstall
   "dry_run": false,
   "files": [
     {"path": "/home/user/.kilo/kilo.jsonc", "checksum": "sha256..."},
-    {"path": "/home/user/.kilo/agents/dev.md", "checksum": "sha256..."},
+    {"path": "/home/user/.kilo/agent/dev.md", "checksum": "sha256..."},
     ...
   ],
   "configs": {
