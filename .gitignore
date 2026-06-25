@@ -1,22 +1,12 @@
-# Системные и пользовательские файлы (домашняя директория)
+# ─── Dot-файлы: по умолчанию игнорируем, точечно разрешаем ─
 .*
+
+# Разрешённые dot-файлы
 !.gitignore
 !.githooks/
 !.kilo/
-
-# Kilo-конфиг внутри .config/ (остальное игнорируется)
 !.config/
-.config/*
-!.config/kilo/
-
-# Репозиторий установщика — отслеживаемые файлы
-!AGENTS.md
-!Makefile
-!README.md
-!install.sh
-!LICENSE
-
-# Dot-файлы конфигурации
+!.github/
 !.yamllint.yml
 !.editorconfig
 !.pre-commit-config.yaml
@@ -26,33 +16,41 @@
 !.python-version
 !.uv.toml
 
-# uv кэш (не трекать)
-.uv-cache/
+# Разрешённые dot-директории
+.config/*
+!.config/kilo/
 
-# Директории репозитория
+# ─── Директории репозитория ───────────────────────
+!AGENTS.md
+!Makefile
+!README.md
+!install.sh
+!LICENSE
 !scripts/
 !src/
 !docs/
-!.github/
 !tests/
 !docker/
+!gui/
 
-# Артефакты разработки
+# ─── Ветка BLE — не трекать на master ────────────
+ble-project/
+
+# ─── Артефакты разработки ─────────────────────────
 node_modules/
 __pycache__/
 *.pyc
 .venv/
+.uv-cache/
 
-# Временные и кэш-файлы
+# ─── Временные и кэш-файлы ───────────────────────
 *~
 *.swp
 *.swo
 *.bak
-
-# Логи
 *.log
 
-# Бинарные пакеты и медиа
+# ─── Бинарные пакеты и медиа ─────────────────────
 *.deb
 *.png
 *.jpg
@@ -60,16 +58,3 @@ __pycache__/
 *.gif
 *.ico
 *.pdf
-
-# Пользовательские директории и файлы (НЕ для git)
-/Pro_logy/
-/v2rayN-russia-setup/
-/backup Linux/
-/Загрузки/
-/Изображения/
-/Рабочий стол/
-/check_kilocode.sh
-/full_network_diag.sh
-/network_full_diag.sh
-/port_dpi_check.sh
-/my_report.txt
