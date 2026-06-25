@@ -4,10 +4,7 @@ description: Специалист по планированию реализац
 version: 1.0.0
 mode: subagent
 temperature: 0.3
-skills:
-  - planner
-  - the-fool
-  - work-controller
+skills: []
 ---
 
 # Planner Specialist#

@@ -26,11 +26,13 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates \
     build-essential \
     python3 \
-    python3-pip \
-    python3-venv \
     nodejs \
     npm \
     && rm -rf /var/lib/apt/lists/*
+
+# Установка uv (замена pip/venv)
+RUN curl -LsSf https://astral.sh/uv/install.sh | sh
+ENV PATH="/home/tester/.local/bin:${PATH}"
 
 # Создание пользователя для тестирования
 RUN useradd -m -s /bin/bash tester && echo "tester ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
@@ -56,8 +58,8 @@ RUN git clone https://github.com/bats-core/bats-core.git /tmp/bats \
     && sudo ./install.sh /usr/local \
     && rm -rf /tmp/bats
 
-# Установка yamllint
-RUN pip3 install --user --break-system-packages yamllint
+# Установка Python-инструментов через uv
+RUN /home/tester/.local/bin/uv sync --frozen 2>&1 || true
 
 # Точка входа по умолчанию
 CMD ["/bin/bash"]

@@ -6,17 +6,19 @@ SHELL := /bin/bash
 .ONESHELL:
 
 # ─── Пути к инструментам ─────────────────────────
-YAMLLINT := $(shell command -v yamllint 2>/dev/null || echo "$$HOME/.local/bin/yamllint")
+UV := $(shell command -v uv 2>/dev/null || echo "$${HOME}/.local/bin/uv")
+YAMLLINT := $(shell command -v yamllint 2>/dev/null || echo "$${HOME}/.local/bin/yamllint")
 BLE_SCRIPTS := $(wildcard ble-project/scripts/setup-env.sh ble-project/scripts/activate.sh)
 SHELLCHECK := $(shell command -v shellcheck 2>/dev/null || echo "")
 BATS := $(shell command -v bats 2>/dev/null || echo "")
-ACTIONLINT := $(shell command -v actionlint 2>/dev/null || echo "$$HOME/go/bin/actionlint")
-SHFMT := $(shell command -v shfmt 2>/dev/null || echo "$$HOME/go/bin/shfmt")
-PRECOMMIT := $(shell command -v pre-commit 2>/dev/null || echo "$$HOME/.local/bin/pre-commit")
+ACTIONLINT := $(shell command -v actionlint 2>/dev/null || echo "$${HOME}/go/bin/actionlint")
+SHFMT := $(shell command -v shfmt 2>/dev/null || echo "$${HOME}/go/bin/shfmt")
+PRECOMMIT := $(shell command -v pre-commit 2>/dev/null || echo "$${HOME}/.local/bin/pre-commit")
 MARKDOWNLINT := $(shell command -v markdownlint 2>/dev/null || echo "")
+GIT_TAG := $(shell git describe --tags --abbrev=0 2>/dev/null || true)
 
 # ─── Цели ────────────────────────────────────────
-.PHONY: help install check verify dry-run uninstall version backup clean lint lint-shell lint-yaml lint-markdown lint-actions lint-shfmt lint-precommit test test-bats sync sync-global sync-check docker-build docker-test git-hooks
+.PHONY: help install check verify dry-run uninstall version backup clean lint lint-shell lint-yaml lint-markdown lint-actions lint-shfmt lint-precommit test test-bats sync sync-global sync-check docker-build docker-test git-hooks uv-sync uv-update uv-list
 
 help: ## Показать справку
 	@echo "KiloCode CLI Installer"
@@ -24,7 +26,7 @@ help: ## Показать справку
 	@echo "Usage: make <target>"
 	@echo ""
 	@echo "Targets:"
-	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | \
+	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' "$(MAKEFILE_LIST)" | \
 		awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-12s\033[0m %s\n", $$1, $$2}'
 
 install: check ## Полная установка (с предварительной проверкой)
@@ -40,12 +42,14 @@ uninstall: ## Полное удаление Kilo
 	@./install.sh --uninstall
 
 dry-run: check ## Сухой прогон установки (без реальных изменений)
-	@INSTALL_DRY_RUN=1 ./install.sh
+	INSTALL_DRY_RUN=1 ./install.sh
 
 version: ## Показать версию установщика
-	@tag=$$(git describe --tags --abbrev=0 2>/dev/null || true); \
-	if [ -n "$$tag" ]; then echo "KiloCode CLI Installer $$tag"; \
-	else grep '^KILO_VERSION=' scripts/lib.sh | cut -d'"' -f2 | xargs -I{} echo "KiloCode CLI Installer v{}"; fi
+	@if [ -n "$(GIT_TAG)" ]; then \
+		echo "KiloCode CLI Installer $(GIT_TAG)"; \
+	else \
+		grep '^KILO_VERSION=' scripts/lib.sh | cut -d'"' -f2 | xargs -I{} echo "KiloCode CLI Installer v{}"; \
+	fi
 
 backup: ## Создать бэкап текущих конфигов в /tmp/
 	@ts=$$(date +%Y%m%d-%H%M%S); \
@@ -75,10 +79,10 @@ lint-shell: ## Проверить shell-скрипты через shellcheck
 lint-yaml: ## Проверить YAML-файлы через yamllint
 	@echo "━━━ yamllint ━━━"
 	@if ! command -v yamllint &>/dev/null && [ ! -f "$(YAMLLINT)" ]; then
-		echo "  [!] yamllint не установлен. Установи: pip3 install --user yamllint"
+		echo "  [!] yamllint не установлен. Установи: uv sync  или  uv tool install yamllint"
 		exit 1
 	else
-		find . -not -path './.git/*' -not -path './.kilo/node_modules/*' -not -path './.config/*' -not -path './src/kilo-config/node_modules/*' \( -name '*.yml' -o -name '*.yaml' \) -print0 | xargs -0 -r $(YAMLLINT) -c .yamllint.yml
+		find . -not -path './.git/*' -not -path './.kilo/node_modules/*' -not -path './.config/*' -not -path './src/kilo-config/node_modules/*' -not -path './.venv/*' -not -path './ble-project/.venv/*' \( -name '*.yml' -o -name '*.yaml' \) -print0 | xargs -0 -r $(YAMLLINT) -c .yamllint.yml
 		@echo "  [✓] yamllint: 0 ошибок"
 	fi
 
@@ -117,10 +121,10 @@ format-shfmt: ## Отформатировать shell-скрипты через 
 	@$(SHFMT) -w -i 2 -bn -ci install.sh scripts/lib.sh src/*.sh tests/*.bats
 	@echo "  [✓] Форматирование завершено"
 
-lint-precommit: ## Проверить через pre-commit хуки
+lint-precommit: uv-sync ## Проверить через pre-commit хуки
 	@echo "━━━ pre-commit ━━━"
 	@if [ ! -x "$(PRECOMMIT)" ]; then
-		echo "  [!] pre-commit не установлен. Установи: pipx install pre-commit"
+		echo "  [!] pre-commit не установлен. Установи: uv sync  или  uv tool install pre-commit"
 		exit 1
 	else
 		$(PRECOMMIT) run --all-files
@@ -210,6 +214,32 @@ sync-global: ## Синхронизировать src/global-config/ из .config
 		fi
 	done
 	@echo "  Готово."
+
+# ─── Python/uv targets ────────────────────────────
+uv-sync: ## Синхронизировать Python-зависимости (uv sync)
+	@echo "━━━ uv sync ━━━"
+	@if [ -z "$(UV)" ] || ! command -v $(UV) &>/dev/null; then
+		echo "  [!] uv не установлен. Установи: curl -LsSf https://astral.sh/uv/install.sh | sh"
+		exit 1
+	else
+		$(UV) sync
+		@echo "  [✓] Зависимости синхронизированы"
+	fi
+
+uv-update: ## Обновить Python-зависимости (uv lock + sync)
+	@echo "━━━ uv update ━━━"
+	@if [ -z "$(UV)" ] || ! command -v $(UV) &>/dev/null; then
+		echo "  [!] uv не установлен."
+		exit 1
+	else
+		$(UV) lock --upgrade
+		$(UV) sync
+		@echo "  [✓] Зависимости обновлены"
+	fi
+
+uv-list: ## Показать установленные Python-пакеты
+	@echo "━━━ uv list ━━━"
+	@$(UV) pip list 2>/dev/null || $(UV) run pip list 2>/dev/null || echo "  [i] Нет Python-пакетов в проекте"
 
 # ─── Git hooks ────────────────────────────────────
 git-hooks: ## Установить pre-commit хуки (.githooks/pre-commit)

@@ -8,7 +8,7 @@
 ## [1.2.0] — 2026-06-25
 
 ### Добавлено
-- Агент `ble-specialist` — эксперт по BLE/GATT реверс-инжинирингу (на master)
+- Агент `ble-specialist` — эксперт по BLE/GATT реверс-инжинирингу
 - CI job: Docker-тест реальной установки (`make install && make verify`)
 - CI job: Lint BLE-скриптов (`ble-project/scripts/`)
 - Makefile цель `git-hooks` — установка pre-commit хуков
@@ -33,7 +33,7 @@
 - `auth.template.json`, `tui.json`, `GUIDE.md`: `opencode` → `kilo`
 - `.config/kilo/package.json`: 7.3.16 → 7.3.40
 - `best-practices.md` (2 копии): все `opencode` → `kilo`
-- Placeholder API-ключи: `sk-1234567890abcdef` → `process.env.API_KEY || "<YOUR_API_KEY>"`
+- Placeholder API-ключи: заменены на `process.env.API_KEY || "<YOUR_API_KEY>"`
 - `docs/solutions/templates/solution-template.md`: удалены дубликаты (4→2 копии)
 
 ## [1.1.0] — 2026-06-22

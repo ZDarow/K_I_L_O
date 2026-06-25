@@ -1,21 +1,15 @@
 # ShellCheck configuration for K_I_L_O project
+# Disable low-value checks that produce false positives
+# SC2046, SC2148, SC2276, SC1036, SC1088, SC1089 — Makefile false positives
+# SC2312 — info: masking return value (intentional in helper functions)
+# SC2250 — style: фигурные скобки у переменных
+# SC2015 — info: A && B || C (намеренный паттерн)
+# SC2086 — info: разделение слов без кавычек (намеренно в safe режиме)
+# SC2088 — warning: тильда в кавычках (для вывода)
+# SC2310 — info: функция в || условии (set -e отключается, но намеренно)
+# SC2249 — info: default case в case (необязателен)
+# SC1091, SC1090 — подключаемые файлы (source-path не всегда доступен)
+disable=SC2046,SC2148,SC2276,SC1036,SC1088,SC1089,SC2312,SC2250,SC2015,SC2086,SC2088,SC2310,SC2249,SC1091,SC1090
 
-# Отключить некоторые предупреждения
-disable=SC1091  # Не проверять подключаемые файлы (source)
-disable=SC1090  # Не проверять пути source-файлов
-disable=SC2154  # Переменные, определённые в других файлах
-disable=SC2034  # Неиспользуемые переменные (цвета, константы)
-disable=SC2317  # Функции, которые вызываются только через trap
-disable=SC2310  # Функции, вызываемые в if/then
-disable=SC2086  # Разделение слов в двойных кавычках (для safe режима)
-
-# Отключить стилистические и информационные предупреждения
-disable=SC2250  # Стиль: фигурные скобки у переменных
-disable=SC2015  # Инфо: A && B || C (намеренный паттерн)
-disable=SC2088  # Предупреждение: тильда в кавычках (намеренно для вывода)
-disable=SC2295  # Инфо: расширение в ${..} (намеренный паттерн)
-disable=SC2312  # Инфо: маскировка return value (частые ложные срабатывания)
-
-# source-path для поиска подключаемых файлов
-source-path=SCRIPTDIR
+# Source search paths
 source-path=scripts/

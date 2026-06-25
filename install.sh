@@ -93,6 +93,11 @@ check_system() {
     echo "  $v"
   else warn "  не установлен"; fi
 
+  subheader "uv"
+  if command -v uv &>/dev/null; then
+    echo "  uv $(uv --version | cut -d' ' -f2)"
+  else warn "  не установлен"; fi
+
   subheader "Git"
   command -v git &>/dev/null && echo "  Git $(git --version | cut -d' ' -f3)" || warn "  не установлен"
 
@@ -137,6 +142,12 @@ verify_installation() {
   else
     warn "  Нет"
     WARNINGS=$((WARNINGS + 1))
+  fi
+
+  subheader "uv"
+  check_cmd uv
+  if command -v uv &>/dev/null; then
+    log "  uv $(uv --version | cut -d' ' -f2)"
   fi
 
   subheader "npm-зависимости"
@@ -274,14 +285,30 @@ install_system_deps() {
     # GPG верификация NodeSource (предотвращение supply chain attack)
     curl -fsSL https://deb.nodesource.com/gpgkey/nodesource.gpg.key | gpg --dearmor \
       | sudo tee /etc/apt/trusted.gpg.d/nodesource.gpg >/dev/null 2>&1 || true
-    curl -fsSL https://deb.nodesource.com/setup_22.x | gpg --verify 2>/dev/null || \
-      warn "GPG верификация NodeSource не удалась, продолжаю без неё"
+    curl -fsSL https://deb.nodesource.com/setup_22.x | gpg --verify 2>/dev/null \
+      || warn "GPG верификация NodeSource не удалась, продолжаю без неё"
     run_sudo "NodeSource" bash -c "curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash -"
     run_sudo "Node.js" apt-get install -y nodejs
   fi
   log "Node.js $(node --version)"
-  run_sudo "packages" apt-get install -y -qq python3 python3-pip git curl wget build-essential
-  [[ $INSTALL_DRY_RUN = 0 ]] && manifest_set_config "packages" "nodejs python3 git"
+
+  # Python 3 (без pip — uv будет менеджером пакетов)
+  run_sudo "packages" apt-get install -y -qq python3 git curl wget build-essential
+
+  # Установка uv (замена pip/venv/pipx)
+  if ! command -v uv &>/dev/null; then
+    log "Устанавливаю uv..."
+    curl -LsSf https://astral.sh/uv/install.sh | sh
+    export PATH="$HOME/.local/bin:$PATH"
+  fi
+  log "uv $(uv --version | cut -d' ' -f2)"
+
+  # Синхронизация Python-инструментов (yamllint, pre-commit и др.)
+  if [[ -f "$SCRIPT_DIR/pyproject.toml" ]]; then
+    uv sync --frozen 2>&1 | tail -3 | tee -a "$LOG_FILE" || warn "uv sync не удался"
+  fi
+
+  [[ $INSTALL_DRY_RUN = 0 ]] && manifest_set_config "packages" "nodejs python3 uv"
 }
 
 install_kilocode() {

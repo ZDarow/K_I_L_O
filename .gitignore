@@ -23,6 +23,11 @@
 !.shellcheckrc
 !.markdownlint.yml
 !.nvmrc
+!.python-version
+!.uv.toml
+
+# uv кэш (не трекать)
+.uv-cache/
 
 # Директории репозитория
 !scripts/
@@ -31,6 +36,12 @@
 !.github/
 !tests/
 !docker/
+
+# Артефакты разработки
+node_modules/
+__pycache__/
+*.pyc
+.venv/
 
 # Временные и кэш-файлы
 *~

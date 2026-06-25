@@ -89,7 +89,7 @@ source ~/.bashrc
 
 ### 3. Системные компоненты
 - Node.js 22 LTS (через NodeSource)
-- Python 3.12+, pip, venv
+- Python 3.12+, uv (менеджер пакетов вместо pip/venv)
 - build-essential, curl, wget, git
 
 ### 4. Системные настройки

@@ -43,13 +43,17 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Установка yamllint
-        run: pip3 install --user yamllint
+      - name: Установка uv и yamllint
+        run: |
+          curl -LsSf https://astral.sh/uv/install.sh | sh
+          export PATH="$HOME/.local/bin:$PATH"
+          uv sync --frozen
 
       - name: Проверка YAML-файлов
         run: |
+          export PATH="$HOME/.local/bin:$PATH"
           echo "=== yamllint ==="
-          find . -not -path './.git/*' -not -path './.kilo/node_modules/*' -not -path './.config/*' \( -name '*.yml' -o -name '*.yaml' \) -print0 | xargs -0 -r ~/.local/bin/yamllint -c .yamllint.yml
+          .venv/bin/yamllint -c .yamllint.yml $$(find . -not -path './.git/*' -not -path './.kilo/node_modules/*' -not -path './.config/*' -not -path './.venv/*' -not -path './ble-project/.venv/*' \( -name '*.yml' -o -name '*.yaml' \) -print)
 
   lint-markdown:
     name: Линтинг Markdown
@@ -112,6 +116,9 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y python3 git curl
 
+      - name: Установка uv
+        run: curl -LsSf https://astral.sh/uv/install.sh | sh
+
       - name: Сухой прогон
         run: bash install.sh --dry-run --skip-preflight
 
@@ -172,6 +179,9 @@ jobs:
           docker run --rm kilo-test bash -c "
             set -euo pipefail
             cd /opt/kilo
+            echo '--- Установка uv ---'
+            curl -LsSf https://astral.sh/uv/install.sh | sh
+            export PATH=\"\$HOME/.local/bin:\$PATH\"
             echo '--- make install ---'
             bash install.sh --skip-preflight 2>&1 | tail -20
             echo '--- make verify ---'

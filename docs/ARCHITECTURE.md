@@ -158,7 +158,7 @@ Dev-конфигурация для разработки установщика.
 
 ### Системные
 - Node.js 22 LTS (устанавливается через NodeSource)
-- Python 3, pip
+- Python 3, uv (замена pip/venv/pipx)
 - Git
 - build-essential, curl, wget
 

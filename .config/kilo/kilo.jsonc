@@ -46,6 +46,8 @@
       "sudo kill -9 *": "deny",
       "tail *": "allow",
       "pip3 *": "allow",
+      "uv *": "allow",
+      "uvx *": "allow",
       "python3 *": "allow",
       "systemctl status *": "allow",
       "lsusb *": "allow",

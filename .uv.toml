@@ -1,0 +1,11 @@
+# uv конфигурация проекта KiloCode
+# https://docs.astral.sh/uv/configuration/files/
+
+# Используем системные сертификаты для совместимости с Linux
+system-certs = true
+
+# Кэш зависимостей
+cache-dir = ".uv-cache"
+
+# Не требовать подтверждения
+no-progress = true

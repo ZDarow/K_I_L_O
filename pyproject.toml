@@ -1,0 +1,26 @@
+# pyproject.toml — KiloCode CLI Installer
+# Управление Python-инструментарием через uv
+# https://docs.astral.sh/uv/
+
+[project]
+name = "kilocode-installer"
+version = "1.2.0"
+description = "KiloCode CLI Installer — инструментарий разработки и развёртывания"
+readme = "README.md"
+requires-python = ">=3.12"
+license = { text = "MIT" }
+keywords = ["kilocode", "cli", "installer", "ble", "esp32"]
+
+[project.scripts]
+kilo-ci = "scripts.lib:main"
+
+[dependency-groups]
+dev = [
+    "yamllint>=1.35",
+    "pre-commit>=4.0",
+]
+
+[tool.uv]
+# Используем системные сертификаты
+system-certs = true
+cache-keys = [{ git = { commit = true } }]
