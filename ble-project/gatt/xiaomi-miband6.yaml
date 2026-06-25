@@ -1,0 +1,135 @@
+# GATT-профиль BLE-устройства (YAML)
+# ============================================
+# Формат для документирования восстановленных GATT-профилей.
+# Используется вместе с gatt-scan.py, btmon-parse.py, btsnoop-analyze.py.
+#
+# Схема:
+#   device:
+#     name:        — Имя устройства (опционально)
+#     address:     — MAC-адрес (опционально)
+#     description: — Описание устройства
+#   services:
+#     - uuid:        — UUID сервиса (16-битный или 128-битный)
+#       name:        — Человекочитаемое имя
+#       mandatory:   — Обязательный (true/false)
+#       characteristics:
+#         - uuid:        — UUID характеристики
+#           name:        — Человекочитаемое имя
+#           type:        — Тип: read / write / notify / indicate / write_no_response
+#           permissions: — Права доступа (опционально)
+#           description: — Описание
+#           format:      — Формат данных: uint8, uint16, uint32, string, bytes, bitfield
+#           example:     — Пример значения
+#           notes:       — Примечания
+
+device:
+  name: "Xiaomi Mi Band 6"
+  address: "~"
+  description: "Xiaomi Smart Band 6 — фитнес-трекер с BLE 5.0"
+  manufacturer: "Xiaomi"
+  model: "XMSH15HM"
+  firmware: "1.0.4.56"
+
+services:
+  - uuid: "1800"
+    name: "Generic Access"
+    mandatory: true
+    characteristics:
+      - uuid: "2a00"
+        name: "Device Name"
+        type: read
+        format: string
+        example: "Mi Smart Band 6"
+        notes: "Имя устройства, может быть изменено через приложение"
+
+      - uuid: "2a01"
+        name: "Appearance"
+        type: read
+        format: uint16
+        example: "0x07C1 (Generic Fitness Tracker)"
+
+      - uuid: "2a04"
+        name: "Peripheral Preferred Connection Parameters"
+        type: read
+        format: bytes
+        notes: "Параметры соединения: интервал, латентность, таймаут"
+
+  - uuid: "1801"
+    name: "Generic Attribute"
+    mandatory: true
+    characteristics:
+      - uuid: "2a05"
+        name: "Service Changed"
+        type: indicate
+        format: uint16
+        notes: "Оповещает об изменении списка сервисов"
+
+  - uuid: "180f"
+    name: "Battery Service"
+    mandatory: false
+    characteristics:
+      - uuid: "2a19"
+        name: "Battery Level"
+        type: read
+        format: uint8
+        example: "85 (%)"
+        notes: "Уровень заряда батареи 0-100%"
+
+      - uuid: "2a1f"
+        name: "Battery Level State"
+        type: notify
+        format: uint8
+        notes: "Статус зарядки: 0=не заряжается, 1=заряжается"
+
+  - uuid: "fee0"
+    name: "Xiaomi Mi Band Service"
+    mandatory: true
+    description: "Основной сервис Xiaomi для взаимодействия с устройством"
+    characteristics:
+      - uuid: "fee1"
+        name: "Authentication"
+        type: write_no_response
+        format: bytes
+        notes: "Авторизация и шифрование канала"
+
+      - uuid: "fee2"
+        name: "Configuration"
+        type: write
+        format: bytes
+        notes: "Конфигурация устройства (язык, формат времени, цели)"
+
+      - uuid: "fee3"
+        name: "Notification"
+        type: notify
+        format: bytes
+        notes: "Основной канал уведомлений (шаги, сон, ЧСС и т.д.)"
+
+      - uuid: "fee4"
+        name: "Activity Data"
+        type: read
+        format: bytes
+        notes: "История активности за период"
+
+  - uuid: "ff00"
+    name: "Tuya/Telink Custom Service"
+    mandatory: false
+    description: "Сервис кастомных команд"
+    characteristics:
+      - uuid: "ff01"
+        name: "Custom Command"
+        type: write
+        format: bytes
+        example: "01 03 00 01"
+        notes: "Сырые команды на устройство, формат зависит от вендора"
+
+  - uuid: "0000a001-0000-1000-8000-00805f9b34fb"
+    name: "Qingping Environment"
+    mandatory: false
+    description: "Сервис датчиков Qingping (температура, влажность)"
+    characteristics:
+      - uuid: "0000a002-0000-1000-8000-00805f9b34fb"
+        name: "Temperature & Humidity"
+        type: notify
+        format: bytes
+        example: "03 15 01 2C 01"
+        notes: "3 байта: temp*100 (LE int16), humidity (uint8)"

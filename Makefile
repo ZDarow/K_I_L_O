@@ -16,7 +16,7 @@ PRECOMMIT := $(shell command -v pre-commit 2>/dev/null || echo "$$HOME/.local/bi
 MARKDOWNLINT := $(shell command -v markdownlint 2>/dev/null || echo "")
 
 # ─── Цели ────────────────────────────────────────
-.PHONY: help install check verify dry-run uninstall version backup clean lint lint-shell lint-yaml lint-markdown lint-actions lint-shfmt lint-precommit test test-bats sync sync-global sync-check docker-build docker-test git-hooks
+.PHONY: help install check verify dry-run uninstall version backup clean lint lint-shell lint-yaml lint-markdown lint-actions lint-shfmt lint-precommit test test-bats sync sync-global sync-check docker-build docker-test docker-install-test git-hooks ble-help ble-setup ble-test ble-scan ble-venv-check
 
 help: ## Показать справку
 	@echo "KiloCode CLI Installer"
@@ -221,4 +221,55 @@ git-hooks: ## Установить pre-commit хуки (.githooks/pre-commit)
 	else
 		echo "  [!] Директория .githooks/ не найдена"
 		exit 1
+	fi
+
+# ─── BLE Project ──────────────────────────────────
+BLE_PYTHON := .venv/bin/python
+BLE_TESTS := ble-project/tests/
+
+ble-help: ## Показать справку по BLE-проекту
+	@echo "BLE Engineering Project"
+	@echo ""
+	@echo "  make ble-setup       — Настройка Python-окружения"
+	@echo "  make ble-test        — Запуск тестов BLE-инструментов"
+	@echo "  make ble-scan        — Сканирование BLE-устройств"
+	@echo "  make ble-venv-check  — Проверка виртуального окружения"
+	@echo ""
+
+ble-setup: ## Настройка Python-окружения для BLE-проекта
+	@echo "━━━ BLE: настройка окружения ━━━"
+	@if [ ! -d ble-project/.venv ]; then
+		python3 -m venv ble-project/.venv
+		echo "  [✓] Виртуальное окружение создано"
+	fi
+	@cd ble-project && $(BLE_PYTHON) -m pip install --upgrade pip -q
+	@cd ble-project && $(BLE_PYTHON) -m pip install bleak bumble bleson pyyaml -q
+	@echo "  [✓] Зависимости установлены"
+
+ble-test: ## Запустить тесты BLE-инструментов (pytest)
+	@echo "━━━ BLE: тестирование ━━━"
+	@if [ ! -d ble-project/.venv ]; then
+		echo "  [!] Виртуальное окружение не найдено. Выполни: make ble-setup"
+		exit 1
+	fi
+	@cd ble-project && $(BLE_PYTHON) -m pytest tests/ -v --tb=short 2>&1 || \
+		cd ble-project && python3 -m pytest tests/ -v --tb=short 2>&1 || \
+		( cd ble-project && python3 -m unittest discover -s tests -v 2>&1 )
+
+ble-scan: ## Сканировать BLE-устройства (требует HCI адаптер)
+	@echo "━━━ BLE: сканирование устройств ━━━"
+	@if [ ! -d ble-project/.venv ]; then
+		echo "  [!] Окружение не настроено. Выполни: make ble-setup"
+		exit 1
+	fi
+	@cd ble-project && $(BLE_PYTHON) scripts/gatt-scan.py scan --timeout 10
+
+ble-venv-check: ## Проверить виртуальное окружение BLE
+	@echo "━━━ BLE: проверка окружения ━━━"
+	@if [ -d ble-project/.venv ]; then
+		echo "  [✓] .venv существует"
+		@cd ble-project && $(BLE_PYTHON) -c "import bleak; print('  [✓] bleak:', bleak.__version__)" 2>/dev/null || echo "  [!] bleak не установлен"
+		@cd ble-project && $(BLE_PYTHON) -c "import yaml; print('  [✓] pyyaml:', yaml.__version__)" 2>/dev/null || echo "  [!] pyyaml не установлен"
+	else
+		echo "  [!] .venv не создан. Выполни: make ble-setup"
 	fi
