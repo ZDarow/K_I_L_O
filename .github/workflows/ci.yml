@@ -27,6 +27,14 @@ jobs:
           shellcheck -x -Calways src/bashrc-append.sh src/profile-append.sh
           echo "=== Проверка tests/ ==="
           shellcheck -x -Calways tests/*.bats
+          echo "=== Проверка ble-project/scripts/ ==="
+          for f in ble-project/scripts/setup-env.sh ble-project/scripts/activate.sh; do
+            if [ -f "$f" ]; then
+              shellcheck -x -Calways "$f"
+            else
+              echo "  [!] $f не найден, пропускаем"
+            fi
+          done
 
   lint-yaml:
     name: Линтинг YAML-файлов

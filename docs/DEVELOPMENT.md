@@ -49,7 +49,7 @@ K_I_L_O/                     # Рабочий репозиторий
 
 ## Добавление нового агента
 
-1. Создать `src/kilo-config/agents/<name>.md` с YAML-фронтматером:
+1. Создать `src/kilo-config/agent/<name>.md` с YAML-фронтматером:
 
 ```markdown
 ---

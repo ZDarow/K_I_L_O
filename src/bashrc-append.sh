@@ -6,4 +6,3 @@
 
 # ---- KiloCode aliases ----
 alias kilo='npx kilo'
-alias kilocode='npx kilocode'

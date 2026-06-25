@@ -10,7 +10,7 @@
 ## Возможности
 
 - **Установка Kilo CLI** — AI-агент для командной строки
-- **9 предустановленных агентов** — dev, git-specialist, debugger, doc-scribe, log-analyzer, planner, reviewer, sys-inspector и другие
+- **10 предустановленных агентов** — dev, git-specialist, debugger, doc-scribe, log-analyzer, planner, reviewer, sys-inspector и другие
 - **9 команд быстрого доступа** — сборка Flutter, управление Git, ревью кода, планирование
 - **Двухуровневая конфигурация** — проектная + глобальная с иерархией приоритетов
 - **SSH + Git** — преднастроенная конфигурация для GitHub/GitLab
@@ -78,7 +78,7 @@ source ~/.bashrc
 
 ### 1. Kilo CLI + Проектная конфигурация (`~/.kilo/`)
 - `@kilocode/cli` (глобально через npm)
-- 9 агентов (dev, git-specialist, debugger, doc-scribe, log-analyzer, planner, reviewer, sys-inspector и др.)
+- 10 агентов (dev, git-specialist, debugger, doc-scribe, log-analyzer, planner, reviewer, sys-inspector, ble-specialist и др.)
 - 9 команд (flutter-build, git-*, plan, review, test, debug)
 - Инструкции на русском
 
@@ -145,6 +145,7 @@ K_I_L_O/
 | `planner` | subagent | Планирование реализации (STANDARD/HARD/CRO/CI) |
 | `reviewer` | subagent | Ревью кода |
 | `sys-inspector` | subagent | Инспекция Linux системы |
+| `ble-specialist` | subagent | Эксперт по BLE/GATT реверс-инжинирингу |
 | `russian-dev` | deprecated | Мержирован в dev |
 
 ---

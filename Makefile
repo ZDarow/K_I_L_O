@@ -7,6 +7,7 @@ SHELL := /bin/bash
 
 # ─── Пути к инструментам ─────────────────────────
 YAMLLINT := $(shell command -v yamllint 2>/dev/null || echo "$$HOME/.local/bin/yamllint")
+BLE_SCRIPTS := $(wildcard ble-project/scripts/setup-env.sh ble-project/scripts/activate.sh)
 SHELLCHECK := $(shell command -v shellcheck 2>/dev/null || echo "")
 BATS := $(shell command -v bats 2>/dev/null || echo "")
 ACTIONLINT := $(shell command -v actionlint 2>/dev/null || echo "$$HOME/go/bin/actionlint")
@@ -65,7 +66,7 @@ lint-shell: ## Проверить shell-скрипты через shellcheck
 		echo "  [!] shellcheck не установлен. Установи: sudo apt-get install -y shellcheck"
 		exit 1
 	else
-		$(SHELLCHECK) -x -Calways install.sh src/bashrc-append.sh src/profile-append.sh tests/*.bats
+		$(SHELLCHECK) -x -Calways install.sh src/bashrc-append.sh src/profile-append.sh $(BLE_SCRIPTS) tests/*.bats
 		@echo "  [✓] ShellCheck: 0 ошибок"
 	fi
 
