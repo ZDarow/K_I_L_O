@@ -1,14 +1,31 @@
 {
   "recommendations": [
-    "timonwong.shellcheck",
-    "ms-vscode.makefile-tools",
-    "yzhang.markdown-all-in-one",
-    "davidanson.vscode-markdownlint",
-    "editorconfig.editorconfig",
-    "tamasfe.even-better-toml",
-    "charliermarsh.ruff",
+    // ── Python ──
     "ms-python.python",
     "ms-python.debugpy",
-    "bierner.markdown-mermaid"
+    "ms-python.vscode-pylance",
+    "charliermarsh.ruff",
+    // ── Shell / Make ──
+    "timonwong.shellcheck",
+    "ms-vscode.makefile-tools",
+    "foxundermoon.shell-format",
+    // ── Markdown ──
+    "yzhang.markdown-all-in-one",
+    "davidanson.vscode-markdownlint",
+    "bierner.markdown-mermaid",
+    // ── Format / Validate ──
+    "editorconfig.editorconfig",
+    "tamasfe.even-better-toml",
+    "redhat.vscode-yaml",
+    // ── Git ──
+    "eamodio.gitlens",
+    "waderyan.gitblame",
+    // ── Docker ──
+    "ms-azuretools.vscode-docker",
+    // ── Debug ──
+    "webfreak.debug",
+    // ── Themes / Icons ──
+    "PKief.material-icon-theme",
+    "Catppuccin.catppuccin-vsc"
   ]
 }

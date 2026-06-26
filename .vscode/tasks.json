@@ -4,41 +4,132 @@
     {
       "label": "🔍 Проверить всё (make lint)",
       "type": "shell",
-      "command": "make lint",
+      "command": "make lint 2>&1",
       "group": {
         "kind": "test",
         "isDefault": true
       },
-      "presentation": { "reveal": "always", "panel": "new" },
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      },
       "problemMatcher": []
     },
     {
       "label": "🧪 Запустить тесты (make test)",
       "type": "shell",
-      "command": "make test",
+      "command": "make test 2>&1",
       "group": "test",
-      "presentation": { "reveal": "always", "panel": "new" }
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "⚙️ Сборка Docker-образа (make docker-build)",
+      "type": "shell",
+      "command": "make docker-build 2>&1",
+      "group": "build",
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      },
+      "problemMatcher": []
     },
     {
       "label": "📦 Синхронизировать зависимости (uv sync)",
       "type": "shell",
-      "command": "uv sync",
+      "command": "uv sync 2>&1",
       "group": "none",
-      "presentation": { "reveal": "always", "panel": "new" }
+      "presentation": {
+        "reveal": "silent",
+        "panel": "dedicated"
+      },
+      "problemMatcher": []
     },
     {
-      "label": "🚀 Запустить GUI сервер",
+      "label": "🚀 Запустить GUI сервер (localhost:8088)",
       "type": "shell",
       "command": "python3 gui/server.py",
-      "group": "none",
-      "presentation": { "reveal": "always", "panel": "new" }
+      "isBackground": true,
+      "problemMatcher": {
+        "pattern": [
+          {
+            "regexp": ".*",
+            "file": 1
+          }
+        ],
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": "^.*K_I_L_O GUI.*$",
+          "endsPattern": "^.*Нажми Ctrl+C.*$"
+        }
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated"
+      }
     },
     {
       "label": "✅ Pre-commit (все файлы)",
       "type": "shell",
-      "command": "pre-commit run --all-files",
+      "command": "pre-commit run --all-files 2>&1",
       "group": "test",
-      "presentation": { "reveal": "always", "panel": "new" }
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "🧹 ShellCheck (install.sh)",
+      "type": "shell",
+      "command": "shellcheck -x -Calways install.sh 2>&1",
+      "group": "test",
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated"
+      },
+      "problemMatcher": {
+        "owner": "shell",
+        "fileLocation": ["relative", "${workspaceFolder}"],
+        "pattern": {
+          "regexp": "^(.*):(\\d+):(\\d+):\\s+(error|warning|note):\\s+(.*)\\s+\\[(.*)\\]$",
+          "file": 1,
+          "line": 2,
+          "column": 3,
+          "severity": 4,
+          "message": 5,
+          "code": 6
+        }
+      }
+    },
+    {
+      "label": "📡 BLE Bumble Ping (Virtual Radio)",
+      "type": "shell",
+      "command": "uv run python3 scripts/bumble/virtual_ble.py --scenario ping 2>&1",
+      "group": "none",
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "📋 Показать справку (make help)",
+      "command": "make help 2>&1",
+      "type": "shell",
+      "group": "none",
+      "presentation": {
+        "reveal": "silent",
+        "panel": "dedicated"
+      },
+      "problemMatcher": []
     }
   ]
 }

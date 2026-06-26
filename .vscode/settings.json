@@ -1,3 +1,75 @@
 {
-    "makefile.configureOnOpen": false
+  // ─── Makefile Tools ─────────────────────────────
+  "makefile.configureOnOpen": false,
+
+  // ─── Editor ─────────────────────────────────────
+  "editor.formatOnSave": true,
+  "editor.renderWhitespace": "boundary",
+  "editor.rulers": [72, 120],
+  "files.insertFinalNewline": true,
+  "files.trimFinalNewlines": true,
+
+  // ─── Shell (Bash) ──────────────────────────────
+  "[shellscript]": {
+    "editor.defaultFormatter": "timonwong.shellcheck",
+    "editor.formatOnSave": true,
+    "files.trimTrailingWhitespace": true
+  },
+
+  // ─── Makefile ──────────────────────────────────
+  "[makefile]": {
+    "editor.insertSpaces": false,
+    "editor.tabSize": 8
+  },
+
+  // ─── Python ────────────────────────────────────
+  "[python]": {
+    "editor.defaultFormatter": "charliermarsh.ruff",
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.organizeImports.ruff": "explicit"
+    }
+  },
+
+  // ─── Markdown ──────────────────────────────────
+  "[markdown]": {
+    "editor.wordWrap": "on",
+    "editor.quickSuggestions": {
+      "comments": "on",
+      "strings": "on",
+      "other": "on"
+    },
+    "files.trimTrailingWhitespace": false
+  },
+  "markdown.validate.enabled": true,
+  "markdown.validate.fileLinks.enabled": "warning",
+  "markdown.validate.fragmentLinks.enabled": "warning",
+  "markdown.validate.referenceLinks.enabled": "warning",
+  "markdown.suggest.paths.enabled": true,
+  "markdown.suggest.paths.includeWorkspaceHeaderCompletions": "onDoubleHash",
+  "markdown.updateLinksOnFileMove.enabled": "prompt",
+
+  // ─── JSON/JSONC ─────────────────────────────────
+  "[json][jsonc]": {
+    "editor.defaultFormatter": "vscode.json-language-features"
+  },
+
+  // ─── YAML ──────────────────────────────────────
+  "[yaml]": {
+    "editor.insertSpaces": true,
+    "editor.tabSize": 2
+  },
+
+  // ─── Поиск ─────────────────────────────────────
+  "search.exclude": {
+    "**/.git": true,
+    "**/.venv": true,
+    "**/node_modules": true,
+    "**/__pycache__": true,
+    "**/*.lock": true
+  },
+  "files.exclude": {
+    "**/__pycache__": true,
+    "**/*.pyc": true
+  }
 }
