@@ -15,7 +15,7 @@ jobs:
     name: Линтинг shell-скриптов
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Установка shellcheck
         run: sudo apt-get update && sudo apt-get install -y shellcheck
@@ -41,7 +41,7 @@ jobs:
     name: Линтинг YAML-файлов
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Установка uv и yamllint
         run: |
@@ -66,7 +66,7 @@ jobs:
     name: Линтинг Markdown
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Установка markdownlint
         run: npm install -g markdownlint-cli
@@ -79,7 +79,7 @@ jobs:
     name: Линтинг GitHub Actions
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Установка actionlint
         run: |
@@ -95,7 +95,7 @@ jobs:
     name: Python-тесты (pytest)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Установка uv
         run: curl -LsSf https://astral.sh/uv/install.sh | sh
@@ -114,7 +114,7 @@ jobs:
     name: Тестирование bash-скриптов (bats)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Установка bats
         uses: mig4/setup-bats@v1
@@ -131,7 +131,7 @@ jobs:
     name: Сухой прогон установки
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Установка Node.js
         uses: actions/setup-node@v4
@@ -153,7 +153,7 @@ jobs:
     name: Pre-flight проверка
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Pre-flight проверка
         run: bash install.sh --check
@@ -162,7 +162,7 @@ jobs:
     name: Проверка синхронизации src/kilo-config и .kilo
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Сравнение src/kilo-config/ и .kilo/
         run: |
@@ -195,7 +195,7 @@ jobs:
     name: Проверка секретов (gitleaks)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Установка gitleaks
         run: |
@@ -208,7 +208,7 @@ jobs:
     name: Docker-тест установки
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Сборка Docker-образа
         run: docker build -f docker/Dockerfile -t kilo-test .
