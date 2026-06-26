@@ -8,25 +8,25 @@
 set -euo pipefail
 
 if command -v pre-commit &>/dev/null; then
-    exec pre-commit run --hook-stage commit
+  exec pre-commit run --hook-stage commit
 fi
 
 # Fallback: базовая проверка shell-синтаксиса
 errors=0
 for f in $(git diff --cached --name-only); do
-    case "$f" in
-        *.sh|*.bash|*.bats)
-            if ! bash -n "$f" 2>/dev/null; then
-                echo "[✗] $f: синтаксическая ошибка shell"
-                errors=$((errors + 1))
-            fi
-            ;;
-    esac
+  case "$f" in
+    *.sh | *.bash | *.bats)
+      if ! bash -n "$f" 2>/dev/null; then
+        echo "[✗] $f: синтаксическая ошибка shell"
+        errors=$((errors + 1))
+      fi
+      ;;
+  esac
 done
 
 if [ "$errors" -gt 0 ]; then
-    echo "Pre-commit: $errors ошибок. Коммит отменён."
-    echo "Установи pre-commit: pip install pre-commit && pre-commit install"
-    exit 1
+  echo "Pre-commit: $errors ошибок. Коммит отменён."
+  echo "Установи pre-commit: pip install pre-commit && pre-commit install"
+  exit 1
 fi
 exit 0

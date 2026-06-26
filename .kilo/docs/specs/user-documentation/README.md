@@ -1,7 +1,7 @@
 # User Documentation Spec
 
 > **Status:** Complete ✅
-> **Phase:** 3 of 3  
+> **Phase:** 3 of 3
 > **Started:** 2024-12-24
 > **Completed:** 2024-12-24
 

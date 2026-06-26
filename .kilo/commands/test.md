@@ -90,7 +90,7 @@ File: [file:line]
 // Before
 [old code]
 
-// After  
+// After
 [fixed code]
 ```
 
@@ -119,7 +119,7 @@ describe('[Component/Function]', () => {
   describe('[Method]', () => {
     it('should [expected behavior]', () => {
       // Arrange
-      // Act  
+      // Act
       // Assert
     });
 

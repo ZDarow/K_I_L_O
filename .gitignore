@@ -50,6 +50,9 @@ __pycache__/
 *.pyc
 .venv/
 .uv-cache/
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
 
 # ─── Установочные артефакты пакетов ─────────────
 *.egg-info/
