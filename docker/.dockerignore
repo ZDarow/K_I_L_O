@@ -1,0 +1,32 @@
+# Игнорируем всё, кроме нужного для Docker-тестов
+**
+!/docker/
+!/Makefile
+!/install.sh
+!/scripts/
+!/src/
+!/tests/
+!/.gitignore
+!/.gitattributes
+!/.shellcheckrc
+!/.editorconfig
+!/.yamllint.yml
+!/.markdownlint.yml
+!/.pre-commit-config.yaml
+!/.nvmrc
+!/.python-version
+!/.bandit
+!/.gitlint
+!/.uv.toml
+!/pyproject.toml
+!/uv.lock
+!/.github/
+
+# Внутренние исключения
+.git/
+__pycache__/
+*.pyc
+.venv/
+node_modules/
+*.egg-info/
+*.log

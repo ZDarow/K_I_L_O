@@ -82,7 +82,7 @@ lint-shell: ## Проверить shell-скрипты через shellcheck
 		echo "  [!] shellcheck не установлен. Установи: sudo apt-get install -y shellcheck"
 		exit 1
 	else
-		$(SHELLCHECK) -x -Calways --severity=style install.sh src/bashrc-append.sh src/profile-append.sh $(BLE_SCRIPTS) tests/*.bats
+		$(SHELLCHECK) -x -Calways --severity=style install.sh scripts/lib.sh src/bashrc-append.sh src/profile-append.sh $(BLE_SCRIPTS) tests/*.bats
 		@echo "  [✓] ShellCheck: 0 ошибок"
 	fi
 
@@ -417,11 +417,11 @@ gui-open: ## Открыть GUI в браузере
 # ─── BLE ─────────────────────────────────────────
 ble-bumble-ping: uv-sync ## Проверить доступность Google Bumble Virtual Radio
 	@echo "━━━ BLE Bumble Ping ━━━"
-	@$(UV) run python3 ble-project/bumble/virtual_ble.py --scenario ping
+	@$(UV) run python3 scripts/bumble/virtual_ble.py --scenario ping
 
 ble-bumble-scan: uv-sync ## Запустить виртуальное BLE-сканирование (Google Bumble)
 	@echo "━━━ BLE Bumble Scan (виртуальное устройство) ━━━"
-	@$(UV) run python3 ble-project/bumble/virtual_ble.py --scenario scan --duration $(or $(DURATION),5)
+	@$(UV) run python3 scripts/bumble/virtual_ble.py --scenario scan --duration $(or $(DURATION),5)
 
 # ─── Git hooks ────────────────────────────────────
 git-hooks: ## Установить pre-commit хуки (.githooks/pre-commit)

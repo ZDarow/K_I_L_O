@@ -1,0 +1,7 @@
+# act configuration — локальный прогон GitHub Actions
+# Usage: act [--job <job-name>]
+# See: https://github.com/nektos/act
+
+--container-architecture linux/amd64
+--action-offline-mode
+--artifact-server-path /tmp/act-artifacts

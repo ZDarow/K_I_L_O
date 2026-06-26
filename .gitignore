@@ -21,6 +21,8 @@
 !.bandit
 !.gitattributes
 !CITATION.cff
+!.actrc
+!docker/.dockerignore
 
 # Разрешённые dot-директории
 .config/*
