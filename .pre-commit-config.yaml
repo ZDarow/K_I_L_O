@@ -81,7 +81,7 @@ repos:
     rev: 1.7.10
     hooks:
       - id: bandit
-        args: ["-r", "-x", ".git,.kilo,src/kilo-config,ble-project"]
+        args: ["-r", "--configfile", ".bandit"]
         files: \.py$
 
   - repo: https://github.com/gitleaks/gitleaks

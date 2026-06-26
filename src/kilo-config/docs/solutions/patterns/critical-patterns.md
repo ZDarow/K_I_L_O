@@ -97,7 +97,8 @@ Any workflow that generates actionable output MUST persist that output as a todo
 
 **❌ WRONG:**
 ```markdown
-See these solutions: [Solution A](link)
+<!-- TODO: Добавить ссылки на решения -->
+See these solutions: <span style="color:#888">(ссылки будут добавлены после создания решений)</span>
 ```
 
 **✅ CORRECT:**

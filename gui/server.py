@@ -11,6 +11,9 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 PORT = int(os.environ.get("GUI_PORT", "8088"))
+# Токен для защиты POST-запросов от CSRF/XSRF
+# Установи GUI_TOKEN для доп. защиты. Без токена работает только GET.
+GUI_TOKEN = os.environ.get("GUI_TOKEN", "")
 
 
 def _run(cmd: list[str], timeout: int = 30) -> dict:
@@ -87,6 +90,24 @@ class Handler(SimpleHTTPRequestHandler):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, directory=str(ROOT / "gui"), **kwargs)
 
+    CSP = (
+        "default-src 'self'; "
+        "script-src 'self' 'unsafe-inline'; "
+        "style-src 'self' 'unsafe-inline'; "
+        "img-src 'self' data:; "
+        "connect-src 'self'; "
+        "form-action 'none'; "
+        "frame-ancestors 'none'; "
+        "base-uri 'self'"
+    )
+
+    def _send_csp(self):
+        self.send_header("Content-Security-Policy", self.CSP)
+
+    def end_headers(self):
+        self._send_csp()
+        super().end_headers()
+
     def _json(self, data: dict | list, status: int = 200):
         self.send_response(status)
         self.send_header("Content-Type", "application/json; charset=utf-8")
@@ -118,6 +139,11 @@ class Handler(SimpleHTTPRequestHandler):
         return super().do_GET()
 
     def do_POST(self):  # noqa: N802 — стандарт http.server
+        # Базовая защита POST-запросов: проверка токена (если GUI_TOKEN установлен)
+        if GUI_TOKEN:
+            sent_token = self.headers.get("X-GUI-Token", "")
+            if sent_token != GUI_TOKEN:
+                return self._error("Unauthorized", 401)
         if self.path.startswith("/api/run/"):
             target = self.path.removeprefix("/api/run/")
             if not re.match(r"^[a-zA-Z0-9_-]+$", target):

@@ -33,8 +33,20 @@ while [[ $# -gt 0 ]]; do
       INSTALL_DRY_RUN=1
       shift
       ;;
+    --resume-from=*)
+      RESUME_FROM="${1#*=}"
+      if ! [[ "$RESUME_FROM" =~ ^[0-9]+$ ]] || [[ "$RESUME_FROM" -lt 1 ]] || [[ "$RESUME_FROM" -gt 10 ]]; then
+        error "Ошибка: --resume-from=N требует число от 1 до 10, получено: $RESUME_FROM"
+        exit 1
+      fi
+      shift
+      ;;
     --resume-from)
       RESUME_FROM="$2"
+      if ! [[ "$RESUME_FROM" =~ ^[0-9]+$ ]] || [[ "$RESUME_FROM" -lt 1 ]] || [[ "$RESUME_FROM" -gt 10 ]]; then
+        error "Ошибка: --resume-from=N требует число от 1 до 10, получено: $RESUME_FROM"
+        exit 1
+      fi
       shift 2
       ;;
     --skip-preflight)
@@ -90,8 +102,11 @@ check_system() {
   if command -v node &>/dev/null; then
     local v
     v=$(node --version)
-    echo "  $v"
-  else warn "  не установлен"; fi
+    echo "  node $v"
+  else warn "  node не установлен"; fi
+  if command -v npm &>/dev/null; then
+    echo "  npm $(npm --version)"
+  else warn "  npm не установлен"; fi
 
   subheader "uv"
   if command -v uv &>/dev/null; then
@@ -172,7 +187,22 @@ verify_installation() {
 
   subheader "SSH"
   if [[ -f "$HOME/.ssh/id_ed25519" ]]; then
-    log "  Ключ есть"
+    local perms
+    perms=$(stat -c "%a" "$HOME/.ssh/id_ed25519" 2>/dev/null)
+    if [[ "$perms" == "600" ]]; then
+      log "  Ключ есть (права $perms — OK)"
+    else
+      warn "  Ключ есть, но права $perms (должно быть 600)"
+      WARNINGS=$((WARNINGS + 1))
+    fi
+    if [[ -d "$HOME/.ssh" ]]; then
+      local dirperms
+      dirperms=$(stat -c "%a" "$HOME/.ssh" 2>/dev/null)
+      if [[ "$dirperms" != "700" ]]; then
+        warn "  .ssh директория: права $dirperms (должно быть 700)"
+        WARNINGS=$((WARNINGS + 1))
+      fi
+    fi
   else
     info "  Ключа нет (опционально)"
   fi

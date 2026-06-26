@@ -11,7 +11,7 @@
 #     cd /opt/kilo && make check && make install && make verify
 #   "
 
-FROM linuxmintd/mint22-amd64:latest
+FROM linuxmintd/mint22-amd64:20250101
 
 # Предотвращение интерактивных запросов
 ENV DEBIAN_FRONTEND=noninteractive

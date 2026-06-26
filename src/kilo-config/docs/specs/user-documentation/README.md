@@ -27,6 +27,7 @@ Create comprehensive documentation for newcomers using Gemini-Kit with Compound 
 
 ## Quick Links
 
-- [Quick Start Guide](../../QUICKSTART.md) (to be created)
-- [Feature Reference](../../FEATURES.md) (to be created)
-- [Workflow Guide](../../WORKFLOWS.md) (to be created)
+<!-- TODO: Создать файлы Quick Start, Feature Reference, Workflow Guide -->
+- Quick Start Guide (планируется)
+- Feature Reference (планируется)
+- Workflow Guide (планируется)

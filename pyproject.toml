@@ -4,7 +4,7 @@
 
 [project]
 name = "kilocode-installer"
-version = "1.2.0"
+version = "1.3.0"
 description = "KiloCode CLI Installer — инструментарий разработки и развёртывания"
 readme = "README.md"
 requires-python = ">=3.12"
@@ -18,6 +18,10 @@ kilo-ci = "scripts.lib:main"
 dev = [
     "yamllint>=1.35",
     "pre-commit>=4.0",
+    "pytest>=9.0",
+    "pytest-timeout>=2.4",
+    "pytest-xdist>=3.8",
+    "pytest-sugar>=1.1",
 ]
 
 [tool.ruff]
@@ -37,6 +41,7 @@ lint.ignore = [
     "RUF100",   # unused noqa — не критично
     "RUF001",   # ambiguous unicode — русский текст содержит кириллицу
     "RUF002",   # docstring ambiguous unicode — то же самое
+    "RUF003",   # comment ambiguous unicode — то же самое
 ]
 target-version = "py312"
 src = ["."]
@@ -48,7 +53,7 @@ src = ["."]
 quote-style = "double"
 
 [tool.pytest.ini_options]
-minversion = "9.1"
+minversion = "9.0"
 testpaths = ["tests"]
 addopts = "-v --tb=short --no-header"
 timeout = 60
@@ -63,8 +68,8 @@ check_untyped_defs = true
 
 [tool.commitizen]
 name = "cz_conventional_commits"
-version = "1.2.0"
-version_file = "src/kilo-config/version.txt"
+version = "1.3.0"
+version_file = "scripts/lib.sh"
 tag_format = "v$version"
 update_changelog_on_bump = true
 changelog_incremental = true

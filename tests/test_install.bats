@@ -51,6 +51,24 @@ setup() {
   [[ "$output" == *"Верификация"* ]]
 }
 
+@test "install.sh --resume-from=abc (ошибка валидации)" {
+  run bash "$SCRIPT_DIR/install.sh" --resume-from=abc
+  [ "$status" -eq 1 ]
+  [[ "$output" == *"требует число"* ]]
+}
+
+@test "install.sh --resume-from=0 (выход за границы)" {
+  run bash "$SCRIPT_DIR/install.sh" --resume-from=0
+  [ "$status" -eq 1 ]
+  [[ "$output" == *"требует число"* ]]
+}
+
+@test "install.sh --resume-from=11 (выход за границы)" {
+  run bash "$SCRIPT_DIR/install.sh" --resume-from=11
+  [ "$status" -eq 1 ]
+  [[ "$output" == *"требует число"* ]]
+}
+
 @test "install.sh --uninstall --dry-run" {
   run bash "$SCRIPT_DIR/install.sh" --uninstall --dry-run
   [ "$status" -eq 0 ]

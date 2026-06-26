@@ -17,7 +17,7 @@ NC='\033[0m'
 BOLD='\033[1m'
 
 # ---- Конфигурация ----
-KILO_VERSION="${KILO_VERSION:-1.2.0}"
+KILO_VERSION="${KILO_VERSION:-1.3.0}"
 MANIFEST_DIR="${HOME:-/tmp}/.local/share/kilo"
 MANIFEST_FILE="$MANIFEST_DIR/manifest.json"
 BACKUP_DIR="/tmp/kilo-backup-$(date +%Y%m%d-%H%M%S)"
@@ -109,14 +109,13 @@ run_sudo() {
     return 0
   fi
 
-  # Блокировка опасных команд
+  # Блокировка опасных команд — regex (защита от вариаций)
   local cmd_str="$*"
-  for pattern in "rm -rf /*" "rm -rf /" "dd if=" "mkfs\." "mkfs " "poweroff" "reboot" "shutdown -h" "shutdown -r"; do
-    if [[ "$cmd_str" == *"$pattern"* ]]; then
-      error "БЛОКИРОВАНО: sudo $cmd_str (опасная команда: $pattern)"
-      return 1
-    fi
-  done
+  # shellcheck disable=SC2076
+  if [[ "$cmd_str" =~ (^|[[:space:]])(rm[[:space:]]+-rf([[:space:]]|/|$)|dd[[:space:]]+if=|mkfs(\.[a-z]+)?[[:space:]]|poweroff[[:space:]]*$|reboot[[:space:]]*$|shutdown[[:space:]]+-[hr]) ]]; then
+    error "БЛОКИРОВАНО: sudo $cmd_str (обнаружена опасная команда)"
+    return 1
+  fi
 
   log_to_file "RUN: sudo $*"
   sudo "$@" 2>&1 | tee -a "$LOG_FILE" || {
@@ -211,5 +210,10 @@ show_version() {
   if [ -n "$tag" ]; then
     ver="${tag#v}"
   fi
-  echo "KiloCode CLI Installer v$ver"
+  # Если код новее тега — показываем обе версии
+  if [ "$ver" != "$KILO_VERSION" ]; then
+    echo "KiloCode CLI Installer v$ver (code: v$KILO_VERSION)"
+  else
+    echo "KiloCode CLI Installer v$ver"
+  fi
 }

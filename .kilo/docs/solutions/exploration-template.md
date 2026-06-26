@@ -24,8 +24,9 @@ tags: []
 {What did internet research reveal? Summarize key findings.}
 
 ### Sources
-- [Source 1](url)
-- [Source 2](url)
+<!-- TODO: Заменить на реальные источники -->
+- [Source 1](<!-- url -->)
+- [Source 2](<!-- url -->)
 
 ## Multi-Order Analysis (Think Hard)
 

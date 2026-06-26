@@ -173,6 +173,19 @@ jobs:
             exit 1
           fi
 
+  lint-secrets:
+    name: Проверка секретов (gitleaks)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Установка gitleaks
+        run: |
+          curl -sSL https://github.com/zricethezav/gitleaks/releases/download/v8.24.2/gitleaks_8.24.2_linux_x64.tar.gz | tar xz -C /usr/local/bin gitleaks
+
+      - name: Проверка git-истории на утечки секретов
+        run: gitleaks git --no-color --verbose
+
   docker-install-test:
     name: Docker-тест установки
     runs-on: ubuntu-latest
@@ -185,19 +198,22 @@ jobs:
       - name: Тестирование установки
         run: |
           echo "=== Запуск make install && make verify в Docker ==="
-          docker run --rm kilo-test bash -c "
+          docker run --rm kilo-test bash -c '
             set -euo pipefail
             cd /opt/kilo
-            echo '--- Установка uv ---'
+            echo "--- Установка uv ---"
             curl -LsSf https://astral.sh/uv/install.sh | sh
-            export PATH=\"\$HOME/.local/bin:\$PATH\"
-            echo '--- make install ---'
+            export PATH="$HOME/.local/bin:$PATH"
+            echo "--- make install ---"
             bash install.sh --skip-preflight 2>&1 | tail -20
-            echo '--- make verify ---'
+            echo "--- make verify ---"
             bash install.sh --verify 2>&1 | tail -20
-            echo '--- Проверка Kilo CLI ---'
-            npx --yes kilo --version 2>&1 || echo 'Kilo CLI не установлен (ожидаемо в изолированном окружении)'
-          "
+            echo "--- Проверка Kilo CLI ---"
+            npx --yes kilo --version 2>&1 || {
+              echo "::warning::Kilo CLI не установлен — проверь npm и @kilocode/cli"
+              exit 1
+            }
+          '
 
       - name: Очистка
         if: always()
