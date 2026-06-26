@@ -1,0 +1,47 @@
+# Автоматический GitHub Release при создании тега
+# Теги создаются: make bump  (локально) → git push --tags
+
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Создать GitHub Release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Генерация заметок к релизу
+        id: notes
+        run: |
+          # Извлекаем секцию из CHANGELOG.md для текущего тега
+          TAG="${GITHUB_REF_NAME}"
+          VERSION="${TAG#v}"
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+          echo "tag=${TAG}" >> "$GITHUB_OUTPUT"
+
+          # Пробуем найти секцию в CHANGELOG
+          if grep -q "^## \\[${VERSION}\\]" CHANGELOG.md 2>/dev/null; then
+            echo "has_changelog=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_changelog=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Создать Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: "K_I_L_O ${{ steps.notes.outputs.version }}"
+          tag_name: ${{ steps.notes.outputs.tag }}
+          body_path: CHANGELOG.md
+          generate_release_notes: ${{ steps.notes.outputs.has_changelog != 'true' }}
+          draft: false
+          prerelease: false

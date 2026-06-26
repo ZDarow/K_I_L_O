@@ -1,0 +1,21 @@
+cff-version: 1.2.0
+message: "Если вы используете K_I_L_O в своей работе, пожалуйста, процитируйте этот репозиторий."
+title: "K_I_L_O — Kilo AI CLI Installer & Configuration Framework"
+version: 1.3.0
+date-released: 2026-06-26
+url: "https://github.com/ZDarow/K_I_L_O"
+authors:
+  - family-names: "Darow"
+    given-names: "Z"
+    alias: "ZDarow"
+    orcid: ""
+license: "MIT"
+repository-code: "https://github.com/ZDarow/K_I_L_O"
+keywords:
+  - "kilocode"
+  - "cli"
+  - "installer"
+  - "ai-agent"
+  - "ble"
+  - "esp32"
+  - "configuration-management"

@@ -83,14 +83,32 @@ jobs:
 
       - name: Установка actionlint
         run: |
-          sudo apt-get update && sudo apt-get install -y golang-go
-          go install github.com/rhysd/actionlint/cmd/actionlint@latest
+          curl -sSL https://github.com/rhysd/actionlint/releases/download/v1.7.12/actionlint_1.7.12_linux_amd64.tar.gz | tar xz -C /usr/local/bin actionlint
+          chmod +x /usr/local/bin/actionlint
 
       - name: Проверка workflow файлов
         run: |
-          export PATH="$HOME/go/bin:$PATH"
           echo "=== actionlint ==="
-          actionlint .github/workflows/ci.yml
+          actionlint -color
+
+  test-python:
+    name: Python-тесты (pytest)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Установка uv
+        run: curl -LsSf https://astral.sh/uv/install.sh | sh
+
+      - name: Синхронизация зависимостей
+        run: |
+          export PATH="$HOME/.local/bin:$PATH"
+          uv sync --frozen
+
+      - name: Запуск pytest
+        run: |
+          export PATH="$HOME/.local/bin:$PATH"
+          uv run pytest tests/test_gui.py -v --tb=short
 
   test-bash:
     name: Тестирование bash-скриптов (bats)

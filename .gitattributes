@@ -1,0 +1,53 @@
+# Auto detect text files and perform LF normalization
+* text=auto eol=lf
+
+# Build artifacts
+*.pyc binary
+*.pyo binary
+*.whl binary
+*.egg binary
+
+# Archives
+*.gz binary
+*.zip binary
+*.tar binary
+
+# Images
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.svg binary
+
+# Lockfiles
+uv.lock linguist-generated
+package-lock.json linguist-generated
+
+# Export-ignore: these are not included in archive export
+.github/          export-ignore
+.gitattributes    export-ignore
+.gitignore        export-ignore
+.githooks/        export-ignore
+.kilocode/        export-ignore
+tests/            export-ignore
+docs/             export-ignore
+docker/           export-ignore
+scripts/          export-ignore
+ble-project/      export-ignore
+AGENTS.md         export-ignore
+CHANGELOG.md      export-ignore
+CONTRIBUTING.md   export-ignore
+SECURITY.md       export-ignore
+CODE_OF_CONDUCT.md export-ignore
+Makefile          export-ignore
+pyproject.toml    export-ignore
+.markdownlint.yml export-ignore
+.yamllint.yml     export-ignore
+.shellcheckrc     export-ignore
+.editorconfig     export-ignore
+.python-version   export-ignore
+.nvmrc            export-ignore
+.bandit           export-ignore
+.gitlint          export-ignore
+.uv.toml          export-ignore

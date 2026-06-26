@@ -2,6 +2,11 @@
 
 **Репозиторий:** [https://github.com/ZDarow/K_I_L_O](https://github.com/ZDarow/K_I_L_O)
 
+[![CI](https://github.com/ZDarow/K_I_L_O/actions/workflows/ci.yml/badge.svg)](https://github.com/ZDarow/K_I_L_O/actions/workflows/ci.yml)
+[![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit)](https://github.com/pre-commit/pre-commit)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![Python](https://img.shields.io/badge/python-3.12+-blue?logo=python)](https://www.python.org/)
+
 Полная конфигурация AI-агента **Kilo** для Linux Mint / Ubuntu: русскоязычные правила,
 системные настройки, CI/CD, тестирование и автоматизация.
 
@@ -11,14 +16,18 @@
 
 - **Установка Kilo CLI** — AI-агент для командной строки
 - **11 предустановленных AI-агентов** — dev, git-specialist, debugger, doc-scribe, log-analyzer, planner, reviewer, sys-inspector, python-senior, ble-specialist, obd2-specialist
-- **9 команд быстрого доступа** — сборка Flutter, управление Git, ревью кода, планирование
-- **Двухуровневая конфигурация** — проектная + глобальная с иерархией приоритетов
+- **9 команд быстрого доступа** — сборка Flutter, Git, ревью кода, планирование, тестирование
+- **Двухуровневая конфигурация** — проектная (`~/.kilo/`) + глобальная (`~/.config/kilo/`) с иерархией приоритетов
 - **SSH + Git** — преднастроенная конфигурация для GitHub/GitLab
 - **Система бэкапов и манифестов** — отслеживание всех установленных файлов
-- **24 pre-commit хука** — автоматическая проверка кода перед каждым коммитом
-- **12 линтеров** — shell, YAML, Markdown, JSONC, Python (ruff, mypy, bandit), орфография, секреты
-- **9 CI job'ов** — GitHub Actions + локальный прогон через `act`
-- **Web-GUI** — SPA-интерфейс для мониторинга и управления проектом
+- **24 pre-commit хука** — автоматическая проверка кода перед каждым коммитом (через pre-commit.ci)
+- **16 инструментов линтинга** — shellcheck, yamllint, markdownlint, actionlint, shfmt, ruff, mypy, bandit, gitleaks, codespell, json5, commitizen, gitlint, pip-audit, deptry, vulture
+- **12 CI job'ов** — GitHub Actions + локальный прогон через `act`
+- **Docker-тестирование** — изолированная установка в Linux Mint контейнере
+- **BLE Bumble Virtual Radio** — виртуальное BLE-устройство для тестов без HCI
+- **Web-GUI** — SPA-интерфейс для мониторинга (0 зависимостей, встроенный HTTP-сервер)
+- **Google Bumble** — фреймворк для BLE-тестирования без физического адаптера
+- **VS Code интеграция** — `.vscode/` (settings, tasks, launch, extensions) + `.kilocode/rules/` (6 режимов)
 
 ---
 
@@ -62,6 +71,7 @@ source ~/.bashrc
 
 | Команда | Действие |
 |---------|----------|
+| `make help` | Справка по всем целям |
 | `make check` | Pre-flight: ОС, sudo, диск, интернет, Node.js |
 | `make install` | Полная установка (с предпроверкой) |
 | `make verify` | Пост-проверка: файлы, checksums, команды |
@@ -69,7 +79,10 @@ source ~/.bashrc
 | `make uninstall` | Полное удаление всех компонентов |
 | `make backup` | Бэкап текущих конфигов в `/tmp/` |
 | `make clean` | Очистка логов установки |
-| `make help` | Справка по целям |
+| `make lint` | Запустить все 12 линтеров |
+| `make test` | Запустить все тесты (BATS + pytest) |
+| `make gui-start` | Запустить веб-интерфейс (localhost:8088) |
+| `make ble-bumble-ping` | Проверить виртуальное BLE-устройство |
 
 Установщик также поддерживает флаги:
 - `./install.sh --dry-run` — просмотр без изменений
@@ -108,30 +121,67 @@ source ~/.bashrc
 ```text
 K_I_L_O/
 │
-├── Makefile              # Точка входа
-├── install.sh            # Установщик (install / --check / --verify / --uninstall)
-├── scripts/lib.sh        # Общие функции (цвета, backup, manifest)
+├── Makefile                  # Точка входа (38 целей)
+├── install.sh                # Установщик (install / --check / --verify / --uninstall)
+├── pyproject.toml            # Python-зависимости и инструментарий (uv)
+├── uv.lock                   # Lock-файл зависимостей (52 пакета)
 │
-├── src/                  # Исходники для установки
-│   ├── kilo-config/      #   → ~/.kilo/
-│   ├── global-config/    #   → ~/.config/kilo/
-│   ├── local-share/      #   → ~/.local/share/kilo/
-│   ├── bashrc-append.sh  #   → ~/.bashrc
-│   └── profile-append.sh #   → ~/.profile
+├── scripts/
+│   ├── lib.sh                # Общие функции (цвета, backup, manifest)
+│   ├── bumble/               # Google Bumble Virtual Radio (BLE без HCI)
+│   │   └── virtual_ble.py    #   3 сценария: ping / scan / gatt-server
+│   └── ble-project/          # ESP32 + Android BLE инструменты
 │
-├── .kilo/                # Dev-конфигурация Kilo
+├── src/                      # Исходники для установки
+│   ├── kilo-config/          #   → ~/.kilo/
+│   ├── global-config/        #   → ~/.config/kilo/
+│   ├── local-share/          #   → ~/.local/share/kilo/
+│   ├── bashrc-append.sh      #   → ~/.bashrc
+│   └── profile-append.sh     #   → ~/.profile
 │
-├── docs/                         # Документация
-│   ├── TECHNICAL_REFERENCE.md    #   Полный технический справочник (новое)
-│   ├── ARCHITECTURE.md           #   Архитектура
-│   ├── CONFIGURATION.md          #   Конфигурация
-│   ├── SCRIPTS.md                #   Скрипты установщика
-│   ├── DEVELOPMENT.md            #   Инструкция для разработчиков
-│   ├── GUIDE.md                  #   Полное руководство пользователя
-│   └── TROUBLESHOOTING.md        #   Устранение проблем
+├── gui/                      # Веб-интерфейс
+│   ├── server.py             #   REST API (5 эндпоинтов, 0 зависимостей)
+│   └── index.html            #   SPA (тёмная тема, консоль, Make-цели)
 │
-├── AGENTS.md             # Правила для Kilo-сессий
-├── LICENSE               # MIT License
+├── tests/                    # Тесты
+│   ├── test_gui.py           #   29 pytest-тестов
+│   ├── test_install.bats     #   BATS-тесты установщика
+│   ├── test_lib.bats         #   BATS-тесты lib.sh
+│   ├── test_preflight.bats   #   BATS-тесты pre-flight
+│   ├── test_sync.bats        #   BATS-тесты синхронизации
+│   ├── test_uninstall.bats   #   BATS-тесты удаления
+│   └── test_verify.bats      #   BATS-тесты верификации
+│
+├── docs/                     # Документация
+│   ├── TECHNICAL_REFERENCE.md #   Полный технический справочник (1309 строк)
+│   ├── ARCHITECTURE.md        #   Архитектура
+│   ├── CONFIGURATION.md       #   Конфигурация
+│   ├── SCRIPTS.md             #   Скрипты установщика
+│   ├── DEVELOPMENT.md         #   Инструкция для разработчиков
+│   ├── GUIDE.md               #   Полное руководство пользователя
+│   └── TROUBLESHOOTING.md     #   Устранение проблем
+│
+├── docker/                   # Docker-тестирование
+│   └── Dockerfile            #   Linux Mint образ
+│
+├── .kilo/                    # Dev-конфигурация Kilo (11 агентов, 9 команд)
+├── .kilocode/                # VS Code Kilo rules (6 режимов)
+├── .vscode/                  # VS Code конфигурация (settings, tasks, launch, extensions)
+│
+├── .github/                  # GitHub
+│   ├── workflows/
+│   │   ├── ci.yml            #   12 CI job'ов
+│   │   └── release.yml       #   Авто-релиз при git tag
+│   ├── dependabot.yml        #   Авто-обновление зависимостей
+│   └── CODEOWNERS            #   Кодовая собственность
+│
+├── .pre-commit-config.yaml   # 24 pre-commit хука
+├── .gitlint                  # Линтинг commit message
+├── .bandit                   # Python security scanner
+├── .gitattributes            # Нормализация файлов
+├── CITATION.cff              # Цитирование
+├── AGENTS.md                 # Правила для Kilo-сессий
+├── LICENSE                   # MIT License
 ├── .gitignore
 └── README.md
 ```
@@ -143,14 +193,16 @@ K_I_L_O/
 | Агент | Тип | Описание |
 |-------|-----|----------|
 | `dev` | primary | Универсальный — Linux, CI/CD, автоматизация, общее ПО |
-| `git-specialist` | primary | Управление репозиториями, CI/CD |
+| `git-specialist` | primary | Управление репозиториями, CI/CD, Git-протоколы |
 | `debugger` | subagent | Анализ ошибок, стектрейсов, root cause |
 | `doc-scribe` | subagent | Технический писатель: README, API, ADR |
 | `log-analyzer` | subagent | Анализ логов, агрегация, отчёты |
 | `planner` | subagent | Планирование реализации (STANDARD/HARD/CRO/CI) |
 | `reviewer` | subagent | Ревью кода |
 | `sys-inspector` | subagent | Инспекция Linux системы |
+| `python-senior` | subagent | Senior Python-разработчик (асинхронность, FastAPI, pytest) |
 | `ble-specialist` | subagent | Эксперт по BLE/GATT реверс-инжинирингу |
+| `obd2-specialist` | subagent | Автомобильная диагностика OBD2, ELM327, CAN |
 | `russian-dev` | deprecated | Мержирован в dev |
 
 ---
@@ -205,15 +257,17 @@ kilo            # Запустить Kilo CLI
 
 | Файл | Описание |
 |------|----------|
-| `docs/TECHNICAL_REFERENCE.md` | Исчерпывающая техническая документация: архитектура, API, сценарии, troubleshooting |
+| `docs/TECHNICAL_REFERENCE.md` | Исчерпывающая техническая документация (1309 строк, 5 разделов, 3 Mermaid-диаграммы) |
 | `docs/ARCHITECTURE.md` | Архитектура проекта и схема модулей |
 | `docs/CONFIGURATION.md` | Документация по конфигурации Kilo |
 | `docs/DEVELOPMENT.md` | Руководство разработчика |
 | `docs/GUIDE.md` | Руководство пользователя |
 | `docs/SCRIPTS.md` | Документация по скриптам |
 | `docs/TROUBLESHOOTING.md` | Устранение неполадок |
+| `docs/KILO-VSCODE.md` | Интеграция с VS Code |
 | `AGENTS.md` | Инструкции для AI-агентов |
 | `CHANGELOG.md` | История изменений проекта |
+| `CITATION.cff` | Цитирование проекта |
 
 ---
 

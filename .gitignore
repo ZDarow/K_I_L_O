@@ -18,6 +18,9 @@
 !.python-version
 !.uv.toml
 !.gitlint
+!.bandit
+!.gitattributes
+!CITATION.cff
 
 # Разрешённые dot-директории
 .config/*

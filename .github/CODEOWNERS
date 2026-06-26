@@ -1,0 +1,33 @@
+# Кодовая собственность K_I_L_O
+# Каждый участник может запросить ревью у владельцев файлов
+
+# De facto владелец всего репозитория
+* @ZDarow
+
+# CI/CD и GitHub конфигурация
+.github/ @ZDarow
+Makefile @ZDarow
+
+# Документация
+*.md @ZDarow
+README.md @ZDarow
+CHANGELOG.md @ZDarow
+docs/ @ZDarow
+
+# Установщик и ядро
+install.sh @ZDarow
+src/ @ZDarow
+scripts/lib.sh @ZDarow
+
+# BLE профиль
+ble-project/ @ZDarow
+
+# GUI
+gui/ @ZDarow
+
+# Тесты
+tests/ @ZDarow
+
+# Конфигурация Kilo
+.kilo/ @ZDarow
+.kilocode/ @ZDarow
