@@ -186,13 +186,20 @@ verify_installation() {
   fi
 
   subheader "SSH"
-  if [[ -f "$HOME/.ssh/id_ed25519" ]]; then
+  local ssh_key_found=""
+  for key in id_ed25519 id_rsa id_ecdsa id_ecdsa_sk id_ed25519_sk; do
+    if [[ -f "$HOME/.ssh/$key" ]]; then
+      ssh_key_found="$key"
+      break
+    fi
+  done
+  if [[ -n "$ssh_key_found" ]]; then
     local perms
-    perms=$(stat -c "%a" "$HOME/.ssh/id_ed25519" 2>/dev/null)
+    perms=$(stat -c "%a" "$HOME/.ssh/$ssh_key_found" 2>/dev/null)
     if [[ "$perms" == "600" ]]; then
-      log "  Ключ есть (права $perms — OK)"
+      log "  Ключ $ssh_key_found (права $perms — OK)"
     else
-      warn "  Ключ есть, но права $perms (должно быть 600)"
+      warn "  Ключ $ssh_key_found, но права $perms (должно быть 600)"
       WARNINGS=$((WARNINGS + 1))
     fi
     if [[ -d "$HOME/.ssh" ]]; then
@@ -233,8 +240,15 @@ do_uninstall() {
   header "Удаление KiloCode"
 
   if [[ $INSTALL_DRY_RUN != 1 ]]; then
-    warn "Будут удалены все файлы KiloCode. Бэкап: $BACKUP_DIR"
-    read -rp "Продолжить? (yes/no): " c
+    warn "Будут удалены все файлы KiloCode."
+    # Пытаемся прочитать backup_dir из манифеста
+    local saved_bak
+    saved_bak=$(manifest_get_config "backup_dir" "")
+    if [[ -n "$saved_bak" ]]; then
+      BACKUP_DIR="$saved_bak"
+    fi
+    warn "Бэкап: $BACKUP_DIR"
+    read -rp "Продолжить? (yes/no): " c || c="no"
     [[ "$c" != "yes" ]] && {
       echo "Отменено."
       exit 0
@@ -295,8 +309,18 @@ step() {
     return 0
   fi
   header "Шаг $num: $desc"
-  "$@" || true
-  if [[ $INSTALL_DRY_RUN = 0 ]]; then manifest_set_config "last_step" "$num" || true; fi
+  if "$@"; then
+    if [[ $INSTALL_DRY_RUN = 0 ]]; then
+      manifest_set_config "step_${num}_status" "done" || true
+      manifest_set_config "last_step" "$num" || true
+    fi
+  else
+    if [[ $INSTALL_DRY_RUN = 0 ]]; then
+      manifest_set_config "step_${num}_status" "failed" || true
+    fi
+    error "Шаг $num: $desc — ошибка"
+    return 1
+  fi
 }
 
 # ─── Шаги установки ──────────────────────────
@@ -338,7 +362,7 @@ install_system_deps() {
     uv sync --frozen 2>&1 | tail -3 | tee -a "$LOG_FILE" || warn "uv sync не удался"
   fi
 
-  [[ $INSTALL_DRY_RUN = 0 ]] && manifest_set_config "packages" "nodejs python3 uv"
+  [[ $INSTALL_DRY_RUN = 0 ]] && manifest_set_config "packages" "nodejs python3 uv" || true
 }
 
 install_kilocode() {
@@ -364,7 +388,7 @@ install_kilo_config() {
     return 0
   }
   dry_run "cp -r $SRC_DIR/kilo-config/* \$HOME/.kilo/" && return 0
-  [[ -f "$HOME/.kilo/kilo.jsonc" ]] && backup_file "$HOME/.kilo"
+  [[ -d "$HOME/.kilo" ]] && backup_file "$HOME/.kilo"
   local count=0
   while IFS= read -r -d '' f; do
     local rel="${f#"$SRC_DIR/kilo-config/"}"
@@ -372,7 +396,7 @@ install_kilo_config() {
     cp "$f" "$HOME/.kilo/$rel"
     manifest_add_file "$HOME/.kilo/$rel"
     count=$((count + 1))
-  done < <(find "$SRC_DIR/kilo-config" -type f ! -name 'package-lock.json' -print0)
+  done < <(find "$SRC_DIR/kilo-config" -type f ! -path '*/node_modules/*' ! -name 'package-lock.json' -print0)
   log "~/.kilo/: $count файлов"
 }
 
@@ -382,7 +406,7 @@ install_global_config() {
     return 0
   }
   dry_run "cp -r $SRC_DIR/global-config/* \$HOME/.config/kilo/" && return 0
-  [[ -f "$HOME/.config/kilo/kilo.jsonc" ]] && backup_file "$HOME/.config/kilo"
+  [[ -d "$HOME/.config/kilo" ]] && backup_file "$HOME/.config/kilo"
   local count=0
   while IFS= read -r -d '' f; do
     local rel="${f#"$SRC_DIR/global-config/"}"
@@ -482,9 +506,9 @@ fi
 
 if [[ $INSTALL_DRY_RUN = 0 ]]; then
   manifest_init
-  manifest_set_config "src_dir" "$SRC_DIR"
-  manifest_set_config "os" "$(uname -s)"
-  manifest_set_config "backup_dir" "$BACKUP_DIR"
+  manifest_set_config "src_dir" "$SRC_DIR" || true
+  manifest_set_config "os" "$(uname -s)" || true
+  manifest_set_config "backup_dir" "$BACKUP_DIR" || true
 fi
 
 step 1 "Детекция ОС" detect_os

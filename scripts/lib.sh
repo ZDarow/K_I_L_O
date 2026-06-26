@@ -48,6 +48,7 @@ check_cmd() {
   fi
 }
 
+# shellcheck disable=SC2034 # зарезервировано для будущих сценариев
 require_cmd() {
   if ! command -v "$1" &>/dev/null; then
     error "Обязательная команда не найдена: $1"
@@ -151,7 +152,7 @@ manifest_add_file() {
   fi
   local tmpf
   tmpf=$(mktemp) || return 1
-  python3 -c "
+  if ! python3 -c "
 import json, sys
 manifest_path, file_path, checksum, tmp_path = sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4]
 with open(manifest_path) as f:
@@ -159,8 +160,26 @@ with open(manifest_path) as f:
 m['files'].append({'path': file_path, 'checksum': checksum})
 with open(tmp_path, 'w') as f:
     json.dump(m, f, indent=2)
-" "$MANIFEST_FILE" "$path" "$csum" "$tmpf" 2>/dev/null || true
+" "$MANIFEST_FILE" "$path" "$csum" "$tmpf" 2>/dev/null; then
+    rm -f "$tmpf"
+    return 1
+  fi
   mv "$tmpf" "$MANIFEST_FILE"
+}
+
+manifest_get_config() {
+  local key="$1"
+  local default="${2:-}"
+  if [[ ! -f "$MANIFEST_FILE" ]]; then
+    echo "$default"
+    return 1
+  fi
+  python3 -c "
+import json, sys
+with open(sys.argv[1]) as f:
+    m = json.load(f)
+print(m.get('configs', {}).get(sys.argv[2], sys.argv[3]))
+" "$MANIFEST_FILE" "$key" "$default" 2>/dev/null || echo "$default"
 }
 
 manifest_set_config() {
@@ -168,7 +187,7 @@ manifest_set_config() {
   local val="$2"
   local tmpf
   tmpf=$(mktemp) || return 1
-  python3 -c "
+  if ! python3 -c "
 import json, sys
 manifest_path, tmp_path = sys.argv[1], sys.argv[2]
 key, val = sys.argv[3], sys.argv[4]
@@ -177,7 +196,10 @@ with open(manifest_path) as f:
 m['configs'][key] = val
 with open(tmp_path, 'w') as f:
     json.dump(m, f, indent=2)
-" "$MANIFEST_FILE" "$tmpf" "$key" "$val" 2>/dev/null || true
+" "$MANIFEST_FILE" "$tmpf" "$key" "$val" 2>/dev/null; then
+    rm -f "$tmpf"
+    return 1
+  fi
   mv "$tmpf" "$MANIFEST_FILE"
 }
 

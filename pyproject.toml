@@ -10,6 +10,9 @@ readme = "README.md"
 requires-python = ">=3.12"
 license = { text = "MIT" }
 keywords = ["kilocode", "cli", "installer", "ble", "esp32"]
+dependencies = [
+    "bumble>=0.0.2",
+]
 
 [project.scripts]
 kilo-ci = "scripts.lib:main"
@@ -22,7 +25,8 @@ dev = [
     "pytest-timeout>=2.4",
     "pytest-xdist>=3.8",
     "pytest-sugar>=1.1",
-    "bumble>=0.0.2",
+    "ruff>=0.9.0",
+    "mypy>=1.15.0",
 ]
 
 [tool.ruff]

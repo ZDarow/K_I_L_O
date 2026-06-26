@@ -13,12 +13,9 @@ import argparse
 import asyncio
 import sys
 
-from bumble import core
 from bumble.device import Device
 from bumble.hci import Address
-from bumble.transport import open_transport
 from bumble.utils import AsyncRunner
-
 
 DEVICE_NAME = "K_I_L_O Virtual BLE"
 DEVICE_ADDRESS = Address("F0:F1:F2:F3:F4:F5")
@@ -35,9 +32,10 @@ async def scenario_scan(duration: int = 5):
     )
 
     await device.power_on()
-    device.on("advertisement", lambda adv: print(
-        f"[BLE] Найдено устройство: {adv.address}, RSSI={adv.rssi}"
-    ))
+    device.on(
+        "advertisement",
+        lambda adv: print(f"[BLE] Найдено устройство: {adv.address}, RSSI={adv.rssi}"),
+    )
 
     await device.start_scanning()
     await asyncio.sleep(duration)
@@ -75,7 +73,9 @@ async def scenario_gatt_server():
 async def scenario_ping():
     """Сценарий: проверка доступности Bumble (Virtual Radio)."""
     try:
-        device = Device.with_hci("virt:0", address=DEVICE_ADDRESS)
+        Device.with_hci(
+            "virt:0", address=DEVICE_ADDRESS
+        )  # Проверка доступности Virtual Radio
         print("[BLE] Virtual Radio: ДОСТУПЕН")
         print(f"[BLE] Устройство: {DEVICE_NAME} ({DEVICE_ADDRESS})")
     except Exception as e:
@@ -88,13 +88,15 @@ def main():
         description="Виртуальный BLE-стенд (Google Bumble)"
     )
     parser.add_argument(
-        "--scenario", "-s",
+        "--scenario",
+        "-s",
         choices=["scan", "gatt-server", "ping"],
         default="ping",
         help="Сценарий тестирования (по умолчанию: ping)",
     )
     parser.add_argument(
-        "--duration", "-d",
+        "--duration",
+        "-d",
         type=int,
         default=5,
         help="Длительность сканирования в секундах",
