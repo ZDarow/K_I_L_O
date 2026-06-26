@@ -19,17 +19,14 @@ BANDIT := $(shell command -v bandit 2>/dev/null || echo "")
 GITLEAKS := $(shell command -v gitleaks 2>/dev/null || echo "")
 RUFF := $(shell command -v ruff 2>/dev/null || echo "")
 MYPY := $(shell command -v mypy 2>/dev/null || echo "")
-PIP_AUDIT := $(shell command -v pip-audit 2>/dev/null || echo "")
-COMMITIZEN := $(shell command -v cz 2>/dev/null || echo "")
-DEPTRY := $(shell command -v deptry 2>/dev/null || echo "")
-VULTURE := $(shell command -v vulture 2>/dev/null || echo "")
-GITLINT := $(shell command -v gitlint 2>/dev/null || echo "")
 CODESPELL := $(shell command -v codespell 2>/dev/null || echo "")
+GITLINT := $(shell command -v gitlint 2>/dev/null || echo "")
+COMMITIZEN := $(shell command -v cz 2>/dev/null || echo "")
 PYTEST := $(shell command -v pytest 2>/dev/null || echo "")
 GIT_TAG := $(shell git describe --tags --abbrev=0 2>/dev/null || true)
 
 # ─── Цели ────────────────────────────────────────
-.PHONY: help install check verify dry-run uninstall uninstall-dry-run version backup clean lint lint-shell lint-yaml lint-markdown lint-jsonc lint-actions lint-shfmt lint-precommit lint-python-security lint-secrets lint-ruff lint-types lint-deps lint-commits lint-deps-unused lint-deadcode lint-git-commits lint-spelling changelog bump format-shfmt test test-bats sync sync-global sync-check docker-build docker-test docker-install-test git-hooks uv-sync uv-update uv-list gui-start gui-open
+.PHONY: help install check verify dry-run uninstall uninstall-dry-run version backup clean lint lint-shell lint-yaml lint-markdown lint-jsonc lint-actions lint-shfmt lint-precommit lint-python-security lint-secrets lint-ruff lint-types lint-deps lint-commits lint-deps-unused lint-deadcode lint-git-commits lint-spelling changelog bump format-shfmt test test-bats test-python sync sync-global sync-check docker-build docker-test docker-install-test git-hooks uv-sync uv-update uv-list gui-start gui-open ble-bumble-ping ble-bumble-scan
 
 help: ## Показать справку
 	@echo "KiloCode CLI Installer"
@@ -284,11 +281,11 @@ test: test-bats test-python ## Запустить все тесты
 
 test-python: uv-sync ## Запустить pytest-тесты для Python-модулей
 	@echo "━━━ pytest ━━━"
-	@if [ -z "$(PYTEST)" ]; then
-		echo "  [!] pytest не установлен. Установи: uv sync  или  uv tool install pytest"
+	@if ! command -v $(UV) &>/dev/null; then
+		echo "  [!] uv не установлен."
 		exit 1
 	else
-		uv run pytest tests/test_gui.py -v --tb=short
+		$(UV) run pytest tests/test_gui.py -v --tb=short
 		@echo "  [✓] pytest: все тесты пройдены"
 	fi
 
@@ -409,6 +406,15 @@ gui-open: ## Открыть GUI в браузере
 	@python3 -c "import webbrowser; webbrowser.open('http://localhost:8088')" 2>/dev/null || \
 		xdg-open http://localhost:8080 2>/dev/null || \
 		echo "  Открой http://localhost:8088 в браузере"
+
+# ─── BLE ─────────────────────────────────────────
+ble-bumble-ping: uv-sync ## Проверить доступность Google Bumble Virtual Radio
+	@echo "━━━ BLE Bumble Ping ━━━"
+	@$(UV) run python3 ble-project/bumble/virtual_ble.py --scenario ping
+
+ble-bumble-scan: uv-sync ## Запустить виртуальное BLE-сканирование (Google Bumble)
+	@echo "━━━ BLE Bumble Scan (виртуальное устройство) ━━━"
+	@$(UV) run python3 ble-project/bumble/virtual_ble.py --scenario scan --duration $(or $(DURATION),5)
 
 # ─── Git hooks ────────────────────────────────────
 git-hooks: ## Установить pre-commit хуки (.githooks/pre-commit)

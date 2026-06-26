@@ -1,6 +1,21 @@
 # pre-commit конфигурация для KiloCode/Kilo
 # Установка: pre-commit install
 # Проверка всех файлов: pre-commit run --all-files
+#
+# pre-commit.ci (GitHub App):
+#   Автоматически исправляет линтеры на PR
+#   Включено: trailing-whitespace, end-of-file-fixer, mixed-line-ending
+
+ci:
+  autofix_prs: true
+  autofix_commit_msg: "chore: авто-исправление pre-commit"
+  autoupdate_schedule: monthly
+  autoupdate_commit_msg: "chore: авто-обновление pre-commit хуков"
+  skip:
+    - mypy              # может требовать дополнительных зависимостей
+    - markdownlint       # требует Node.js 22+
+    - gitleaks           # требует установки gitleaks
+    - gitlint            # проверяет только новые коммиты (не все файлы)
 
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
@@ -88,3 +103,9 @@ repos:
     rev: v8.24.2
     hooks:
       - id: gitleaks
+
+  - repo: https://github.com/jorisroovers/gitlint
+    rev: v0.19.1
+    hooks:
+      - id: gitlint
+        args: ["--ignore", "M1,B6", "--msg-filename"]

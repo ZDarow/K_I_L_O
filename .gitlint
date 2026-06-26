@@ -1,0 +1,19 @@
+# Gitlint — валидация commit messages
+# Правила для Conventional Commits
+
+[general]
+# Максимальная длина заголовка
+max-line-length=72
+
+# Игнорировать Merge, Fixup, и Sqwush коммиты
+ignore=merge,fixedup,squash
+
+[title-max-length]
+line-length=72
+
+[title-match-regex]
+# Conventional Commits: feat|fix|chore|docs|refactor|style|test|perf|ci
+regex=^(feat|fix|chore|docs|refactor|style|test|perf|ci)(\(.+\))?!?: .+
+
+[body-max-line-length]
+line-length=120

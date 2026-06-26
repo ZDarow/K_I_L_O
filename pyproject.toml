@@ -22,6 +22,7 @@ dev = [
     "pytest-timeout>=2.4",
     "pytest-xdist>=3.8",
     "pytest-sugar>=1.1",
+    "bumble>=0.0.2",
 ]
 
 [tool.ruff]
@@ -78,3 +79,5 @@ changelog_incremental = true
 # Используем системные сертификаты
 system-certs = true
 cache-keys = [{ git = { commit = true } }]
+# Публикуем entry point kilo-ci (иначе uv не устанавливает project.scripts)
+package = true
