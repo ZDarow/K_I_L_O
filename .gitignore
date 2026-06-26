@@ -5,6 +5,7 @@
 !.gitignore
 !.githooks/
 !.kilo/
+!.kilocode/
 !.config/
 !.github/
 !.yamllint.yml
