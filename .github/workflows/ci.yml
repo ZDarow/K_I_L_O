@@ -53,7 +53,14 @@ jobs:
         run: |
           export PATH="$HOME/.local/bin:$PATH"
           echo "=== yamllint ==="
-          .venv/bin/yamllint -c .yamllint.yml $$(find . -not -path './.git/*' -not -path './.kilo/node_modules/*' -not -path './.config/*' -not -path './.venv/*' -not -path './ble-project/.venv/*' \( -name '*.yml' -o -name '*.yaml' \) -print)
+          find . \
+            -not -path './.git/*' \
+            -not -path './.kilo/node_modules/*' \
+            -not -path './.config/*' \
+            -not -path './.venv/*' \
+            -not -path './ble-project/.venv/*' \
+            \( -name '*.yml' -o -name '*.yaml' \) \
+            -print0 | xargs -0 .venv/bin/yamllint -c .yamllint.yml
 
   lint-markdown:
     name: Линтинг Markdown

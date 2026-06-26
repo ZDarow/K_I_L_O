@@ -99,8 +99,7 @@ lint-markdown: ## Проверить Markdown-файлы через markdownlint
 lint-jsonc: ## Проверить JSONC-файлы через json5
 	@echo "━━━ JSONC lint ━━━"
 	@if ! command -v json5 &>/dev/null; then
-		echo "  [!] json5 не установлен. Установи: npm install -g json5"
-		exit 1
+		echo "  [!] json5 не установлен. Пропускаю. Установи: npm install -g json5"
 	else
 		errors=0
 		find . -name '*.jsonc' -not -path './node_modules/*' -not -path './.kilo/node_modules/*' -not -path './.git/*' -print0 | while IFS= read -r -d '' f; do

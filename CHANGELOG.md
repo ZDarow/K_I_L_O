@@ -1,5 +1,7 @@
 # Changelog
 
+<!-- markdownlint-disable MD024 — повторяющиеся заголовки свойственны Keep a Changelog -->
+
 Все значимые изменения проекта K_I_L_O документируются в этом файле.
 
 Формат основан на [Keep a Changelog](https://keepachangelog.com/ru/1.1.0/),
