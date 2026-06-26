@@ -149,11 +149,14 @@ import time
 
 ser = serial.Serial('/dev/rfcomm0', 38400, timeout=5)
 
-# Инициализация: сброс, выключить эхо и пробелы
+# Инициализация: сброс, выключить эхо, пробелы и заголовки
 ser.write(b'ATZ\r\n')
 time.sleep(1)
 ser.reset_input_buffer()
 ser.write(b'ATE0\r\n')
+time.sleep(0.2)
+ser.reset_input_buffer()
+ser.write(b'ATH0\r\n')          # отключить заголовки
 time.sleep(0.2)
 ser.reset_input_buffer()
 ser.write(b'ATS0\r\n')
@@ -183,7 +186,7 @@ if '490201' in cleaned:
                 vin_chars.append(c)
             else:
                 break
-    vin = ''.join(vin_chars)
+    vin = ''.join(vin_chars)[:17]   # VIN строго 17 символов
     print(f"VIN: {vin}")
 else:
     print("VIN не найден в ответе")
@@ -228,15 +231,22 @@ def send_cmd(ser, cmd):
 
 
 def obd_request(ser, pid_cmd):
-    """Запрос OBD2 PID и возврат сырого ответа без заголовков/пробелов."""
+    """Запрос OBD2 PID и возврат сырых данных (без заголовка/пробелов)."""
     resp = send_cmd(ser, pid_cmd)
     # Убираем всё лишнее
     resp = resp.replace('>', '').replace('\r', '').replace('\n', '').strip()
-    # Если включены заголовки — удаляем их (первые 4 hex-цифры + пробел)
-    parts = resp.replace(' ', '').split('4' + pid_cmd[2:], 1)
+    # Проверка на отсутствие данных
+    if 'NO DATA' in resp or '?' in resp or not resp:
+        return None
+    # Вычисляем заголовок ответа: service + 0x40 (бит ответа)
+    service = pid_cmd[:2]                                          # "01"
+    response_service = f"{int(service, 16) | 0x40:02X}"           # "41"
+    header = response_service + pid_cmd[2:]                        # "410C"
+    # Если заголовки включены — удаляем их
+    parts = resp.replace(' ', '').split(header, 1)
     if len(parts) > 1:
         return parts[1]
-    # Если заголовков нет — просто убираем пробелы
+    # Если заголовков нет (ATH0) — просто убираем пробелы
     return resp.replace(' ', '')
 
 
@@ -277,6 +287,7 @@ send_cmd(ser, 'ATZ')
 time.sleep(1.5)
 send_cmd(ser, 'ATE0')
 send_cmd(ser, 'ATL0')
+send_cmd(ser, 'ATH0')
 send_cmd(ser, 'ATS0')
 
 print(f"=== Мониторинг двигателя (порт: {SERIAL_PORT}) ===")
@@ -345,6 +356,7 @@ send_cmd(ser, 'ATZ')
 time.sleep(1.5)
 send_cmd(ser, 'ATE0')
 send_cmd(ser, 'ATL0')
+send_cmd(ser, 'ATH0')
 send_cmd(ser, 'ATS0')
 
 # Запрос DTC (Service 03)
@@ -353,6 +365,12 @@ print(f"Сырой ответ: {repr(raw)}")
 
 # Парсинг: очистка от служебных символов
 cleaned = raw.replace('>', '').replace('\r', '').replace('\n', '').strip()
+# Проверка на пустой ответ
+if not cleaned or 'NO DATA' in cleaned:
+    print("  Нет данных от ЭБУ")
+    ser.close()
+    exit(0)
+
 # Пример ответа при ATS0 ATE0: "43 01 21 02 34 00 00 00"
 # После удаления пробелов: "4301210234000000"
 # Убираем первый байт (Service PID) — 43  → остаётся "01210234000000"
@@ -403,6 +421,7 @@ ser = serial.Serial('/dev/rfcomm0', 38400, timeout=3)
 send_cmd(ser, 'ATZ', 1)
 send_cmd(ser, 'ATE0')
 send_cmd(ser, 'ATL0')
+send_cmd(ser, 'ATH0')
 send_cmd(ser, 'ATS0')
 
 # 1. Переключение на протокол CAN 11bit 500k
@@ -417,6 +436,7 @@ print("=== Сканирование Service 22 ===")
 for pid in range(0x00, 0xFF, 0x10):
     req = f'22{pid:02X}00'
     resp = send_cmd(ser, req)
+    time.sleep(0.05)   # задержка между запросами, чтобы не перегрузить шину
     if resp and 'NO DATA' not in resp and resp.strip():
         print(f"PID {pid:02X}: {resp[:80].strip()}")
 
@@ -729,12 +749,14 @@ ser = serial.Serial('/dev/rfcomm0', 38400, timeout=3)
 send_cmd(ser, 'ATZ', 1)
 send_cmd(ser, 'ATE0')
 send_cmd(ser, 'ATL0')
+send_cmd(ser, 'ATH0')
 send_cmd(ser, 'ATS0')
 
 # Сканирование PIDs (Service 01)
 print("=== Сканирование PIDs Service 01 ===")
 for pid in range(0x00, 0xFF):
     resp = send_cmd(ser, f'01{pid:02X}')
+    time.sleep(0.05)   # задержка между запросами
     cleaned = resp.replace(' ', '').replace('>', '').replace('\r', '').replace('\n', '').strip()
     if cleaned and 'NODATA' not in cleaned and '?' not in cleaned and len(cleaned) > 2:
         print(f"PID 0x{pid:02X} активен: {cleaned[:80]}")
@@ -761,8 +783,10 @@ def analyze_can_log(filepath):
 
     with open(filepath) as f:
         for line in f:
-            # candump format: can0 7E8 [8] 04 41 0C 00 00 00 00 00
-            m = re.match(r'can\d+\s+(\w+)\s+\[\d+\]\s+([\w\s]+)', line)
+            # candump format (without -e):    can0 7E8 [8] 04 41 0C ...
+            # candump format (with -e):       (1712345678.123456) can0 7E8 [8] 04 41 0C ...
+            # Универсальный парсер: ищем ID + длину + данные
+            m = re.match(r'(?:\([^)]+\)\s+)?can\d+\s+(\w+)\s+\[\d+\]\s+([\w\s]+)', line)
             if m:
                 can_id = int(m.group(1), 16)
                 ecu_tx[can_id] += 1
