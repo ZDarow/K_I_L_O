@@ -1,13 +1,14 @@
 # ─── Dot-файлы: по умолчанию игнорируем, точечно разрешаем ─
 .*
 
-# Разрешённые dot-файлы
+# Разрешённые dot-директории
 !.gitignore
 !.githooks/
 !.kilo/
 !.kilocode/
 !.config/
 !.github/
+!.vscode/
 !.yamllint.yml
 !.editorconfig
 !.pre-commit-config.yaml

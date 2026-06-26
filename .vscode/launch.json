@@ -1,0 +1,32 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "🌐 GUI сервер (Debug)",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/gui/server.py",
+      "console": "integratedTerminal",
+      "env": { "GUI_PORT": "8088" },
+      "justMyCode": true
+    },
+    {
+      "name": "🧪 Тесты GUI (pytest)",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "pytest",
+      "args": ["tests/test_gui.py", "-v", "--tb=short"],
+      "console": "integratedTerminal",
+      "justMyCode": true
+    },
+    {
+      "name": "📡 BLE Bumble Ping",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/scripts/bumble/virtual_ble.py",
+      "args": ["--scenario", "ping"],
+      "console": "integratedTerminal",
+      "justMyCode": true
+    }
+  ]
+}

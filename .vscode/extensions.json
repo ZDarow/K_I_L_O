@@ -1,0 +1,14 @@
+{
+  "recommendations": [
+    "timonwong.shellcheck",
+    "ms-vscode.makefile-tools",
+    "yzhang.markdown-all-in-one",
+    "davidanson.vscode-markdownlint",
+    "editorconfig.editorconfig",
+    "tamasfe.even-better-toml",
+    "charliermarsh.ruff",
+    "ms-python.python",
+    "ms-python.debugpy",
+    "bierner.markdown-mermaid"
+  ]
+}

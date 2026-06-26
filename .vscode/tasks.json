@@ -1,0 +1,44 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "🔍 Проверить всё (make lint)",
+      "type": "shell",
+      "command": "make lint",
+      "group": {
+        "kind": "test",
+        "isDefault": true
+      },
+      "presentation": { "reveal": "always", "panel": "new" },
+      "problemMatcher": []
+    },
+    {
+      "label": "🧪 Запустить тесты (make test)",
+      "type": "shell",
+      "command": "make test",
+      "group": "test",
+      "presentation": { "reveal": "always", "panel": "new" }
+    },
+    {
+      "label": "📦 Синхронизировать зависимости (uv sync)",
+      "type": "shell",
+      "command": "uv sync",
+      "group": "none",
+      "presentation": { "reveal": "always", "panel": "new" }
+    },
+    {
+      "label": "🚀 Запустить GUI сервер",
+      "type": "shell",
+      "command": "python3 gui/server.py",
+      "group": "none",
+      "presentation": { "reveal": "always", "panel": "new" }
+    },
+    {
+      "label": "✅ Pre-commit (все файлы)",
+      "type": "shell",
+      "command": "pre-commit run --all-files",
+      "group": "test",
+      "presentation": { "reveal": "always", "panel": "new" }
+    }
+  ]
+}
