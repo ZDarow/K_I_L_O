@@ -152,8 +152,10 @@ verify_installation() {
   check_cmd npm
 
   subheader "KiloCode"
-  if npx --yes kilo --version &>/dev/null 2>&1; then
-    log "  Доступен"
+  if command -v kilo &>/dev/null; then
+    log "  Доступен ($(command -v kilo))"
+  elif [[ -x "$HOME/.npm-global/bin/kilo" ]]; then
+    log "  Доступен (~/.npm-global/bin/kilo)"
   else
     warn "  Нет"
     WARNINGS=$((WARNINGS + 1))
@@ -370,10 +372,38 @@ install_kilocode() {
     warn "npx не найден"
     return 0
   }
-  dry_run "npx --yes kilo --version" && return 0
-  npx --yes kilo --version &>/dev/null 2>&1 && log "KiloCode уже доступен" || {
-    npm install -g @kilocode/cli 2>&1 | tail -3 | tee -a "$LOG_FILE"
+
+  # Если kilo уже в PATH — всё ок
+  if command -v kilo &>/dev/null; then
+    log "KiloCode уже доступен: $(command -v kilo)"
+    return 0
+  fi
+
+  # Проверка ~/.npm-global на случай установки в user prefix
+  if [[ -x "$HOME/.npm-global/bin/kilo" ]]; then
+    log "KiloCode уже доступен: ~/.npm-global/bin/kilo"
+    export PATH="$HOME/.npm-global/bin:$PATH"
+    return 0
+  fi
+
+  # Пробуем установить глобально
+  local npm_output
+  npm_output=$(npm install -g @kilocode/cli 2>&1) && {
+    echo "$npm_output" | tail -3 | tee -a "$LOG_FILE"
+    return 0
   }
+
+  echo "$npm_output" | tail -5 | tee -a "$LOG_FILE"
+
+  # EACCES — fallback на user-local prefix
+  if echo "$npm_output" | grep -q "EACCES"; then
+    warn "Нет прав на /usr/local/lib/node_modules. Устанавливаю в ~/.npm-global..."
+    mkdir -p "$HOME/.npm-global"
+    npm config set prefix "$HOME/.npm-global" 2>/dev/null || true
+    export PATH="$HOME/.npm-global/bin:$PATH"
+    npm install -g @kilocode/cli 2>&1 | tail -3 | tee -a "$LOG_FILE"
+    log "KiloCode установлен в ~/.npm-global"
+  fi
 }
 
 create_dirs() {

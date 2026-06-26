@@ -4,5 +4,6 @@
 # Добавлено установщиком K_I_L_O
 # ============================================
 
-# ---- KiloCode aliases ----
+# ---- KiloCode paths and aliases ----
+export PATH="$HOME/.npm-global/bin:$PATH"
 alias kilo='npx kilo'
