@@ -23,6 +23,12 @@ MD040:
     - diff
     - jsonc
     - markdown
+    - mermaid
+    - makefile
+    - dockerfile
+    - ini
+    - text
+    - toml
 
 # Таблицы — стандартный стиль (с пробелами вокруг ячеек)
 MD060:

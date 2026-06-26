@@ -10,11 +10,15 @@
 ## Возможности
 
 - **Установка Kilo CLI** — AI-агент для командной строки
-- **10 предустановленных агентов** — dev, git-specialist, debugger, doc-scribe, log-analyzer, planner, reviewer, sys-inspector и другие
+- **11 предустановленных AI-агентов** — dev, git-specialist, debugger, doc-scribe, log-analyzer, planner, reviewer, sys-inspector, python-senior, ble-specialist, obd2-specialist
 - **9 команд быстрого доступа** — сборка Flutter, управление Git, ревью кода, планирование
 - **Двухуровневая конфигурация** — проектная + глобальная с иерархией приоритетов
 - **SSH + Git** — преднастроенная конфигурация для GitHub/GitLab
 - **Система бэкапов и манифестов** — отслеживание всех установленных файлов
+- **24 pre-commit хука** — автоматическая проверка кода перед каждым коммитом
+- **12 линтеров** — shell, YAML, Markdown, JSONC, Python (ruff, mypy, bandit), орфография, секреты
+- **9 CI job'ов** — GitHub Actions + локальный прогон через `act`
+- **Web-GUI** — SPA-интерфейс для мониторинга и управления проектом
 
 ---
 
@@ -78,7 +82,7 @@ source ~/.bashrc
 
 ### 1. Kilo CLI + Проектная конфигурация (`~/.kilo/`)
 - `@kilocode/cli` (глобально через npm)
-- 10 агентов (dev, git-specialist, debugger, doc-scribe, log-analyzer, planner, reviewer, sys-inspector, ble-specialist и др.)
+- 11 агентов (dev, git-specialist, debugger, doc-scribe, log-analyzer, planner, reviewer, sys-inspector, python-senior, ble-specialist, obd2-specialist)
 - 9 команд (flutter-build, git-*, plan, review, test, debug)
 - Инструкции на русском
 
@@ -117,13 +121,14 @@ K_I_L_O/
 │
 ├── .kilo/                # Dev-конфигурация Kilo
 │
-├── docs/                 # Документация
-│   ├── ARCHITECTURE.md   #   Архитектура
-│   ├── CONFIGURATION.md  #   Конфигурация
-│   ├── SCRIPTS.md        #   Скрипты установщика
-│   ├── DEVELOPMENT.md    #   Инструкция для разработчиков
-│   ├── GUIDE.md          #   Полное руководство пользователя
-│   └── TROUBLESHOOTING.md # Устранение проблем
+├── docs/                         # Документация
+│   ├── TECHNICAL_REFERENCE.md    #   Полный технический справочник (новое)
+│   ├── ARCHITECTURE.md           #   Архитектура
+│   ├── CONFIGURATION.md          #   Конфигурация
+│   ├── SCRIPTS.md                #   Скрипты установщика
+│   ├── DEVELOPMENT.md            #   Инструкция для разработчиков
+│   ├── GUIDE.md                  #   Полное руководство пользователя
+│   └── TROUBLESHOOTING.md        #   Устранение проблем
 │
 ├── AGENTS.md             # Правила для Kilo-сессий
 ├── LICENSE               # MIT License
@@ -193,6 +198,22 @@ kilo
 ```bash
 kilo            # Запустить Kilo CLI
 ```
+
+---
+
+## Документация
+
+| Файл | Описание |
+|------|----------|
+| `docs/TECHNICAL_REFERENCE.md` | Исчерпывающая техническая документация: архитектура, API, сценарии, troubleshooting |
+| `docs/ARCHITECTURE.md` | Архитектура проекта и схема модулей |
+| `docs/CONFIGURATION.md` | Документация по конфигурации Kilo |
+| `docs/DEVELOPMENT.md` | Руководство разработчика |
+| `docs/GUIDE.md` | Руководство пользователя |
+| `docs/SCRIPTS.md` | Документация по скриптам |
+| `docs/TROUBLESHOOTING.md` | Устранение неполадок |
+| `AGENTS.md` | Инструкции для AI-агентов |
+| `CHANGELOG.md` | История изменений проекта |
 
 ---
 

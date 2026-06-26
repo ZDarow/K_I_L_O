@@ -4,8 +4,7 @@
 import json
 import os
 import re
-import shlex
-import subprocess
+import subprocess  # nosec B404 — безопасно: shell=False, аргументы не из пользовательского ввода
 import sys
 from http.server import HTTPServer, SimpleHTTPRequestHandler
 from pathlib import Path
@@ -17,8 +16,13 @@ PORT = int(os.environ.get("GUI_PORT", "8088"))
 def _run(cmd: list[str], timeout: int = 30) -> dict:
     """Запустить команду, вернуть {rc, stdout, stderr}."""
     try:
-        r = subprocess.run(cmd, capture_output=True, text=True,
-                           timeout=timeout, cwd=ROOT)
+        r = subprocess.run(
+            cmd,
+            capture_output=True,
+            text=True,  # nosec B603 — shell=False, cmd из валидированных источников
+            timeout=timeout,
+            cwd=ROOT,
+        )
         return {"rc": r.returncode, "stdout": r.stdout, "stderr": r.stderr}
     except FileNotFoundError:
         return {"rc": -1, "stdout": "", "stderr": f"Команда не найдена: {cmd[0]}"}
@@ -52,7 +56,7 @@ def api_targets() -> list[dict]:
     result = _run(["make", "-qp", "help"])
     targets = []
     for line in result["stdout"].split("\n"):
-        m = re.match(r'^([a-zA-Z0-9_-]+):.*##\s*(.*)$', line)
+        m = re.match(r"^([a-zA-Z0-9_-]+):.*##\s*(.*)$", line)
         if m:
             targets.append({"name": m.group(1), "desc": m.group(2).strip()})
     # Если make -qp не выдал описания — парсим Makefile напрямую
@@ -60,7 +64,7 @@ def api_targets() -> list[dict]:
         mf = ROOT / "Makefile"
         if mf.exists():
             for line in mf.read_text().split("\n"):
-                m = re.match(r'^([a-zA-Z0-9_-]+):.*##\s*(.*)$', line)
+                m = re.match(r"^([a-zA-Z0-9_-]+):.*##\s*(.*)$", line)
                 if m:
                     targets.append({"name": m.group(1), "desc": m.group(2).strip()})
     return targets
@@ -94,7 +98,7 @@ class Handler(SimpleHTTPRequestHandler):
     def _error(self, msg: str, status: int = 400):
         self._json({"error": msg}, status)
 
-    def do_GET(self):
+    def do_GET(self):  # noqa: N802 — стандарт http.server
         path = self.path.rstrip("/")
 
         if path == "/api/status":
@@ -105,31 +109,32 @@ class Handler(SimpleHTTPRequestHandler):
             return self._json(api_version())
         if path.startswith("/api/git-log"):
             n = 10
-            result = _run(["git", "log", f"--max-count={n}",
-                          "--pretty=format:%h %s (%ar)"])
+            result = _run(
+                ["git", "log", f"--max-count={n}", "--pretty=format:%h %s (%ar)"]
+            )
             commits = [c for c in result["stdout"].strip().split("\n") if c]
             return self._json(commits)
 
         return super().do_GET()
 
-    def do_POST(self):
+    def do_POST(self):  # noqa: N802 — стандарт http.server
         if self.path.startswith("/api/run/"):
             target = self.path.removeprefix("/api/run/")
-            if not re.match(r'^[a-zA-Z0-9_-]+$', target):
+            if not re.match(r"^[a-zA-Z0-9_-]+$", target):
                 return self._error(f"Недопустимое имя цели: {target}")
             return self._json(api_run(target))
         return self._error("Not found", 404)
 
     def log_message(self, fmt: str, *args):
-        """Тихий лог."""
-        sys.stderr.write(f"[gui] {args[0]} {args[1]} {args[2]}\n")
+        """Тихий лог — форматируем и пишем в stderr."""
+        sys.stderr.write(f"[gui] {fmt % args}\n")
 
 
 def main():
     os.chdir(ROOT)
-    server = HTTPServer(("0.0.0.0", PORT), Handler)
+    server = HTTPServer(("127.0.0.1", PORT), Handler)  # только localhost
     print(f"  K_I_L_O GUI: http://localhost:{PORT}/")
-    print(f"  Нажми Ctrl+C для остановки")
+    print("  Нажми Ctrl+C для остановки")
     try:
         server.serve_forever()
     except KeyboardInterrupt:

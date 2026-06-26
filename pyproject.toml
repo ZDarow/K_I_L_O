@@ -20,6 +20,55 @@ dev = [
     "pre-commit>=4.0",
 ]
 
+[tool.ruff]
+# Правила: F (pyflakes), E/W (pycodestyle), I (isort), N (pep8-naming),
+#          UP (pyupgrade), COM (flake8-commas), PL (pylint), RUF (ruff),
+#          SIM (flake8-simplify), LOG (flake8-logging), INT (flake8-int)
+lint.select = [
+    "F", "E", "W", "I", "N",
+    "UP",    # pyupgrade — современный синтаксис
+    "RUF",   # ruff-специфичные правила
+    "SIM",   # упрощение кода
+    "COM",   # запятые
+]
+lint.ignore = [
+    "E501",     # длинные строки разрешены
+    "COM812",   # missing trailing comma — конфликтует с ruff-format
+    "RUF100",   # unused noqa — не критично
+    "RUF001",   # ambiguous unicode — русский текст содержит кириллицу
+    "RUF002",   # docstring ambiguous unicode — то же самое
+]
+target-version = "py312"
+src = ["."]
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["F401"]
+
+[tool.ruff.format]
+quote-style = "double"
+
+[tool.pytest.ini_options]
+minversion = "9.1"
+testpaths = ["tests"]
+addopts = "-v --tb=short --no-header"
+timeout = 60
+timeout_method = "thread"
+
+[tool.mypy]
+python_version = "3.12"
+strict = false
+warn_unused_configs = true
+ignore_missing_imports = true
+check_untyped_defs = true
+
+[tool.commitizen]
+name = "cz_conventional_commits"
+version = "1.2.0"
+version_file = "src/kilo-config/version.txt"
+tag_format = "v$version"
+update_changelog_on_bump = true
+changelog_incremental = true
+
 [tool.uv]
 # Используем системные сертификаты
 system-certs = true

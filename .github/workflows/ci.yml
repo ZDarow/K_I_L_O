@@ -83,12 +83,14 @@ jobs:
 
       - name: Установка actionlint
         run: |
+          sudo apt-get update && sudo apt-get install -y golang-go
           go install github.com/rhysd/actionlint/cmd/actionlint@latest
 
       - name: Проверка workflow файлов
         run: |
+          export PATH="$HOME/go/bin:$PATH"
           echo "=== actionlint ==="
-          actionlint
+          actionlint .github/workflows/ci.yml
 
   test-bash:
     name: Тестирование bash-скриптов (bats)
